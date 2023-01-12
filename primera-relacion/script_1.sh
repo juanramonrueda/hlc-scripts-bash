@@ -42,14 +42,11 @@ function crear_usuario(){
     echo ""
     
     # Se usa -n 1 para no tener que pulsar la tecla Intro y continuar en cuanto se introduzca un carácter
-    read -n 1 -p "¿Quiere crear el usuario con directorio personal? (S/N): " TIPO_CREACION_SIN_VALIDAR
+    read -n 1 -p "¿Quiere crear el usuario con directorio personal? (S/N): " RESPUESTA
     echo ""
 
-    # Se convierte el contenido de la variable de mayúscula a minúscula
-    TIPO_CREACION=$( echo "$TIPO_CREACION_SIN_VALIDAR" | tr [A-Z] [a-z] )
-
     # Comprobación si el usuario tendrá o no directorio personal
-    if [[ $TIPO_CREACION == "s" ]]; then
+    if [[ $RESPUESTA == "s" || $RESPUESTA == "S" ]]; then
         # ADDUSER crea el usuario con la contraseña que tendrá y además crea el directorio personal
         adduser $NOMBRE_USUARIO
 
@@ -66,6 +63,7 @@ function crear_usuario(){
     fi
 
     # Se muestra el último registro para mostrar el usuario creado
+    echo ""
     tail -n -1 /etc/passwd
 }
 
@@ -98,10 +96,116 @@ function deshabilitar_usuarios() {
 }
 
 
+# Cambio de permisos de un fichero para un usuario
+function permisos_fichero(){
+    read -p "Introduzca la ruta absoluta del fichero al que quiere cambiar los permisos" RUTA_RUTA_NOMBRE_FICHERO
+
+    RUTA_FICHERO=$()
+
+    NOMBRE_FICHERO=$(echo "$RUTA_RUTA_NOMBRE_FICHERO" | cut -d '/' -1)
+
+    if test -e $RUTA_NOMBRE_FICHERO ; then
+        echo "Permisos de Usuario: "$(ls -ld $RUTA_NOMBRE_FICHERO | cut -c 2-4)
+        echo ""
+        echo "Permisos de Grupo: "$(ls -ld $RUTA_NOMBRE_FICHERO | cut -c 5-7)
+        echo ""
+        echo "Permisos de Otros: "$(ls -ld $RUTA_NOMBRE_FICHERO | cut -c 8-10)
+        echo ""
+        echo "r => Lectura | w => Escritura | x => Ejecución | - => Sin permiso"
+        echo ""
+        read -n 1 -p "¿Quiere cambiar los permisos? (S/N): " RESPUESTA
+        echo ""
+
+        if [[ $RESPUESTA = "S" || $RESPUESTA = "s" ]] ; then
+            echo "Escriba la letra o letras en el orden anterior para asignar los permisos (las letras que no se pongan servirán para quitar el permiso)"
+            echo ""
+
+            for GRUPOS in Usuario Grupo Otros ; do
+                read -p "Introduzca los permisos de $GRUPOS: " PERMISOS
+
+                PERMISOS_MAY=$(echo $PERMISOS | tr [a-z] [A-Z])
+                echo ""
+
+                if [ $GRUPOS = Usuario ] ; then
+                    case $PERMISOS_MAY in
+                        RWX) chmod u+rwx $RUTA_NOMBRE_FICHERO;;
+                        RW) chmod u+rw-x $RUTA_NOMBRE_FICHERO;;
+                        RX) chmod u+rx-w $RUTA_NOMBRE_FICHERO;;
+                        R) chmod u+r-wx $RUTA_NOMBRE_FICHERO;;
+                        WX) chmod u+wx-r $RUTA_NOMBRE_FICHERO;;
+                        W) chmod u+w-rx $RUTA_NOMBRE_FICHERO;;
+                        X) chmod u+x-rw $RUTA_NOMBRE_FICHERO;;
+                    esac
+
+                elif [ $GRUPOS = Grupo ] ; then
+                    case $PERMISOS_MAY in
+                        RWX) chmod g+rwx $RUTA_NOMBRE_FICHERO;;
+                        RW) chmod g+rw-x $RUTA_NOMBRE_FICHERO;;
+                        RX) chmod g+rx-w $RUTA_NOMBRE_FICHERO;;
+                        R) chmod g+r-wx $RUTA_NOMBRE_FICHERO;;
+                        WX) chmod g+wx-r $RUTA_NOMBRE_FICHERO;;
+                        W) chmod g+w-rx $RUTA_NOMBRE_FICHERO;;
+                        X) chmod g+x-rw $RUTA_NOMBRE_FICHERO;;
+                    esac
+
+                else
+                    case $PERMISOS_MAY in
+                        RWX) chmod o+rwx $RUTA_NOMBRE_FICHERO;;
+                        RW) chmod o+rw-x $RUTA_NOMBRE_FICHERO;;
+                        RX) chmod o+rx-w $RUTA_NOMBRE_FICHERO;;
+                        R) chmod o+r-wx $RUTA_NOMBRE_FICHERO;;
+                        WX) chmod o+wx-r $RUTA_NOMBRE_FICHERO;;
+                        W) chmod o+w-rx $RUTA_NOMBRE_FICHERO;;
+                        X) chmod o+x-rw $RUTA_NOMBRE_FICHERO;;
+                    esac
+                fi
+            done
+
+            echo "Permisos del Usuario: "$(ls -ld $RUTA_NOMBRE_FICHERO | cut -c 2-4)
+            echo ""
+            echo "Permisos del Grupo: "$(ls -ld $RUTA_NOMBRE_FICHERO | cut -c 5-7)
+            echo ""
+            echo "Permisos de Otros: "$(ls -ld $RUTA_NOMBRE_FICHERO | cut -c 8-10)
+            echo ""
+
+        else
+            echo "Los permisos no han sufrido modificación"
+        fi
+        
+    else
+        echo "El archivo $NOMBRE_FICHERO existe en la ruta" $RUTA_FICHERO
+    fi
+}
+
+
+# Copia de seguridad del directorio personal de un usuario
+function copia_seguridad_usuario(){
+    echo "hola"
+}
+
+
+# Usuarios conectados en el sistema
+function usuarios_conectados_sistema(){
+    echo "hola"
+}
+
+
+# Espacio libre en el disco duro
+function espacio_libre_disco(){
+    echo "hola"
+}
+
+
+# Trazado de ruta desde el origen hasta la IP o URL de destino
+function trazado_ruta(){
+    echo "hola"
+}
+
+
 #-----------------------------------------------------------------------------------------------------------------
 # Ejecución del script
 
-while [[ $OPCN_USUARIO == "9" ]]; do
+while [ $OPCN_USUARIO != "9" ]; do
     limpiar_pantalla
     
     mostrar_menu
@@ -114,16 +218,19 @@ while [[ $OPCN_USUARIO == "9" ]]; do
         1) crear_usuario;;
         2) habilitar_usuarios;;
         3) deshabilitar_usuarios;;
-        4);;
-        5);;
-        6);;
-        7);;
-        8);;
-        9) echo "Ejecución finalizada";;
-        *) echo "Se ha equivocado de número"
+        4) permisos_fichero;;
+        5) copia_seguridad_usuario;;
+        6) usuarios_conectados_sistema;;
+        7) espacio_libre_disco;;
+        8) trazado_ruta;;
+        9) echo "" && echo "Ejecución finalizada";;
+        *) echo "" && echo "Se ha equivocado de número"
     esac
 
-    if [[ $OPCN_USUARIO == "9" ]]; then
+    if [[ $OPCN_USUARIO != "9" ]]; then
+        sleep 2s
+
+        echo ""
         read -n 1 -p "Pulse una tecla para continuar..."
     
     fi
