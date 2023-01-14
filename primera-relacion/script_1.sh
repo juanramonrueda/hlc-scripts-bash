@@ -277,11 +277,10 @@ function copia_seguridad_usuario(){
         echo ""
         ls $DIRECTORIO_COPIAS_SEGURIDAD
 
-    # En caso de no existir el usuario en el sistema, muestra dicho mensaje
+    # En caso de no existir el usuario en el sistema, avisa al usuario
     else
         echo "El usuario $USUARIO no existe en el sistema"
     fi
-    
 }
 
 
@@ -306,13 +305,26 @@ function espacio_libre_disco(){
 
 # Trazado de ruta desde el origen hasta la IP o URL de destino
 function trazado_ruta(){
-    COMPROBACION_TRACEROUTE=$(apt list git | grep "installed")
+    COMPROBACION_TRACEROUTE=$(apt list traceroute | grep "instalado" | cut -c 1-10)
 
-    if [ $COMPROBACION_TRACEROUTE == "*installed*" ]; then
-        echo "Traceroute está instalado"
+    if [ $COMPROBACION_TRACEROUTE == "traceroute" ]; then
+        read -p "Introduzca la IP o URL a la que quiere hacer el trazado" IP_URL
+        echo ""
+
+        traceroute $IP_URL
     
     else
-        echo "traceroute no está instalado"
+        echo "Traceroute no está instalado y se procederá con la instalación (posiblemente se necesite introducir la contraseña)"
+        sleep2s
+        echo ""
+        sudo apt update && sudo apt install traceroute
+
+        echo ""
+        read -p "Introduzca la IP o URL a la que quiere hacer el trazado" IP_URL
+        echo ""
+
+        traceroute $IP_URL
+
     fi
 }
 
