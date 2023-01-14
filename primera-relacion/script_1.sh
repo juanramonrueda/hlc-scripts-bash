@@ -24,7 +24,7 @@ function mostrar_menu() {
     echo "      1.- Crear usuario"
     echo "      2.- Habilitar usuario"
     echo "      3.- Deshabilitar usuario"
-    echo "      4.- Cambiar permisos a un usuario"
+    echo "      4.- Cambiar permisos a un fichero"
     echo "      5.- Copia de seguridad del directorio de trabajo de un usuario determinado"
     echo "      6.- Usuarios conectados actualmente"
     echo "      7.- Espacio libre en disco"
@@ -98,13 +98,50 @@ function deshabilitar_usuarios() {
 
 # Cambio de permisos de un fichero para un usuario
 function permisos_fichero(){
-    read -p "Introduzca la ruta absoluta del fichero al que quiere cambiar los permisos" RUTA_RUTA_NOMBRE_FICHERO
+    # Se inicializa la variable a 1 para el primer bucle FOR
+    LISTADO_NIVELES=1
 
-    RUTA_FICHERO=$()
+    # Se inicializa la variable a 1 para el segundo bucle FOR
+    COMPROBACION_DIRECTORIO=1
 
-    NOMBRE_FICHERO=$(echo "$RUTA_RUTA_NOMBRE_FICHERO" | cut -d '/' -1)
+    read -p "Introduzca la ruta absoluta del fichero al que quiere cambiar los permisos: " RUTA_NOMBRE_FICHERO
 
+    # Obtención de la cantidad de niveles hasta llegar al archivo mediante el conteo del símbolo "/"
+    CANTIDAD_NIVELES=$(echo "$RUTA_NOMBRE_FICHERO" | grep -o "/" | wc -l)
+
+    # Se recorren los niveles para realizar un cut -f y obtener la ruta en la que se encuentra el archivo
+    for NIVELES in `seq 1 1 $CANTIDAD_NIVELES`
+    do
+        # Guarda en la variable --> 1,1,2... así hasta el nivel establecido en la variable $CANTIDAD_NIVELES
+        LISTADO_NIVELES="$LISTADO_NIVELES,$NIVELES"
+    done
+
+    # Se obtiene en variable la ruta del archivo, sin agregar a la variable el archivo
+    RUTA_FICHERO=$(echo "$RUTA_NOMBRE_FICHERO" | cut -d "/" -f $LISTADO_NIVELES)
+
+    # Se guarda en variable el número del nivel en el que se encuentra el archivo
+    NIVEL_FICHERO=$(($CANTIDAD_NIVELES+1))
+
+    # Se obtiene únicamente el nombre del archivo en variable usando la operación anterior
+    NOMBRE_FICHERO=$(echo "$RUTA_NOMBRE_FICHERO" | cut -d "/" -f $NIVEL_FICHERO)
+
+    # Se guarda en variable el nivel del directorio que contiene el archivo 
+    COMPROBACION_DIRECTORIO_NIVEL=$(($CANTIDAD_NIVELES-1))
+
+    # Se recorren los niveles para realizar un cut -f y obtener la ruta del directorio del archivo
+    for NIVELES in `seq 1 1 $COMPROBACION_DIRECTORIO_NIVEL`
+    do
+        # Guarda en la variable --> 1,1,2... así hasta el nivel establecido en la variable $COMPROBACION_DIRECTORIO_NIVEL
+        COMPROBACION_DIRECTORIO="$COMPROBACION_DIRECTORIO,$NIVELES"
+    done
+
+    # Se obtiene en variable la ruta del directorio que puede dar fallos por un error al escribirlo
+    COMPROBACION_DIRECTORIO_EXISTENCIA=$(echo "$RUTA_NOMBRE_FICHERO" | cut -d "/" -f $COMPROBACION_DIRECTORIO)
+
+    # Se comprueba si la ruta y el archivo introducido por el usuario existe
     if test -e $RUTA_NOMBRE_FICHERO ; then
+
+        # Se muestran los permisos actuales del fichero que se quiere modificar
         echo "Permisos de Usuario: "$(ls -ld $RUTA_NOMBRE_FICHERO | cut -c 2-4)
         echo ""
         echo "Permisos de Grupo: "$(ls -ld $RUTA_NOMBRE_FICHERO | cut -c 5-7)
@@ -116,51 +153,62 @@ function permisos_fichero(){
         read -n 1 -p "¿Quiere cambiar los permisos? (S/N): " RESPUESTA
         echo ""
 
+        # Se comprueba si el usuario quiere cambiar los permisos
         if [[ $RESPUESTA = "S" || $RESPUESTA = "s" ]] ; then
-            echo "Escriba la letra o letras en el orden anterior para asignar los permisos (las letras que no se pongan servirán para quitar el permiso)"
+            echo "Escriba las letras (en el orden anterior establecido) o símbolos para asignar los permisos"
             echo ""
 
+            # Se recorren los tres tipos de grupos de permisos que tiene un archivo o directorio
             for GRUPOS in Usuario Grupo Otros ; do
+                # Se pregunta por los permisos que quiere poner al fichero
                 read -p "Introduzca los permisos de $GRUPOS: " PERMISOS
 
+                # Se convierten los permisos introducidos por el usuario a mayúsculas para que funcione el CASE
                 PERMISOS_MAY=$(echo $PERMISOS | tr [a-z] [A-Z])
                 echo ""
 
+                # Cuando entre el FOR en Usuario, realizará los cambios introducidos por el usuario
                 if [ $GRUPOS = Usuario ] ; then
                     case $PERMISOS_MAY in
                         RWX) chmod u+rwx $RUTA_NOMBRE_FICHERO;;
-                        RW) chmod u+rw-x $RUTA_NOMBRE_FICHERO;;
-                        RX) chmod u+rx-w $RUTA_NOMBRE_FICHERO;;
-                        R) chmod u+r-wx $RUTA_NOMBRE_FICHERO;;
-                        WX) chmod u+wx-r $RUTA_NOMBRE_FICHERO;;
-                        W) chmod u+w-rx $RUTA_NOMBRE_FICHERO;;
-                        X) chmod u+x-rw $RUTA_NOMBRE_FICHERO;;
+                        RW-) chmod u+rw-x $RUTA_NOMBRE_FICHERO;;
+                        R-X) chmod u+rx-w $RUTA_NOMBRE_FICHERO;;
+                        R--) chmod u+r-wx $RUTA_NOMBRE_FICHERO;;
+                        -WX) chmod u+wx-r $RUTA_NOMBRE_FICHERO;;
+                        -W-) chmod u+w-rx $RUTA_NOMBRE_FICHERO;;
+                        --X) chmod u+x-rw $RUTA_NOMBRE_FICHERO;;
+                        ---) chmod u-rwx $RUTA_NOMBRE_FICHERO;;
                     esac
 
+                # Cuando entre el FOR en Grupo, realizará los cambios introducidos por el usuario
                 elif [ $GRUPOS = Grupo ] ; then
                     case $PERMISOS_MAY in
                         RWX) chmod g+rwx $RUTA_NOMBRE_FICHERO;;
-                        RW) chmod g+rw-x $RUTA_NOMBRE_FICHERO;;
-                        RX) chmod g+rx-w $RUTA_NOMBRE_FICHERO;;
-                        R) chmod g+r-wx $RUTA_NOMBRE_FICHERO;;
-                        WX) chmod g+wx-r $RUTA_NOMBRE_FICHERO;;
-                        W) chmod g+w-rx $RUTA_NOMBRE_FICHERO;;
-                        X) chmod g+x-rw $RUTA_NOMBRE_FICHERO;;
+                        RW-) chmod g+rw-x $RUTA_NOMBRE_FICHERO;;
+                        R-X) chmod g+rx-w $RUTA_NOMBRE_FICHERO;;
+                        R--) chmod g+r-wx $RUTA_NOMBRE_FICHERO;;
+                        -WX) chmod g+wx-r $RUTA_NOMBRE_FICHERO;;
+                        -W-) chmod g+w-rx $RUTA_NOMBRE_FICHERO;;
+                        --X) chmod g+x-rw $RUTA_NOMBRE_FICHERO;;
+                        ---) chmod g-rwx $RUTA_NOMBRE_FICHERO;;
                     esac
 
+                # Cuando entre el FOR en Otros, realizará los cambios introducidos por el usuario
                 else
                     case $PERMISOS_MAY in
                         RWX) chmod o+rwx $RUTA_NOMBRE_FICHERO;;
-                        RW) chmod o+rw-x $RUTA_NOMBRE_FICHERO;;
-                        RX) chmod o+rx-w $RUTA_NOMBRE_FICHERO;;
-                        R) chmod o+r-wx $RUTA_NOMBRE_FICHERO;;
-                        WX) chmod o+wx-r $RUTA_NOMBRE_FICHERO;;
-                        W) chmod o+w-rx $RUTA_NOMBRE_FICHERO;;
-                        X) chmod o+x-rw $RUTA_NOMBRE_FICHERO;;
+                        RW-) chmod o+rw-x $RUTA_NOMBRE_FICHERO;;
+                        R-X) chmod o+rx-w $RUTA_NOMBRE_FICHERO;;
+                        R--) chmod o+r-wx $RUTA_NOMBRE_FICHERO;;
+                        -WX) chmod o+wx-r $RUTA_NOMBRE_FICHERO;;
+                        -W-) chmod o+w-rx $RUTA_NOMBRE_FICHERO;;
+                        --X) chmod o+x-rw $RUTA_NOMBRE_FICHERO;;
+                        ---) chmod o-rwx $RUTA_NOMBRE_FICHERO;;
                     esac
                 fi
             done
 
+            # Se muestran los nuevos permisos del fichero al usuario para comprobación de los cambios
             echo "Permisos del Usuario: "$(ls -ld $RUTA_NOMBRE_FICHERO | cut -c 2-4)
             echo ""
             echo "Permisos del Grupo: "$(ls -ld $RUTA_NOMBRE_FICHERO | cut -c 5-7)
@@ -168,19 +216,72 @@ function permisos_fichero(){
             echo "Permisos de Otros: "$(ls -ld $RUTA_NOMBRE_FICHERO | cut -c 8-10)
             echo ""
 
+        # En el caso de que el usuario no quiera realizar cambios en los permisos, se muestra el mensaje
         else
-            echo "Los permisos no han sufrido modificación"
+            echo "Los permisos del fichero no han sufrido modificación alguna"
         fi
         
+    # En el caso de que haya algún error al introducir la ruta del fichero se mostrará el posible error
     else
-        echo "El archivo $NOMBRE_FICHERO existe en la ruta" $RUTA_FICHERO
+        # En el caso de que no exista el fichero en la ruta, mostrará los directorios y archivo del nivel
+        if test -e $RUTA_FICHERO ; then
+            echo "El archivo $NOMBRE_FICHERO existe en la ruta" $RUTA_FICHERO
+            echo ""
+            echo "Estos son los ficheros y directorios que se encuentran en la ruta:"
+            ls -l $RUTA_FICHERO
+
+        # En el caso de que no exista la ruta del directorio, mostrará los directorios que contiene el nivel anterior
+        else
+            echo "No existe la ruta en la que se encuentra el archivo, posiblemente tiene un error"
+            echo ""
+            echo "Estos son los directorios y archivos del nivel anterior al fallo:"
+            ls -l $COMPROBACION_DIRECTORIO_EXISTENCIA
+        fi
     fi
 }
 
 
 # Copia de seguridad del directorio personal de un usuario
 function copia_seguridad_usuario(){
-    echo "hola"
+    DIRECTORIO_COPIAS_SEGURIDAD="/copias_seguridad_usuarios"
+
+    # Petición del nombre de usuario para realizar la copia de seguridad de su directorio personal
+    read -p "Introduzca el nombre del usuario del cuál quiere hacer una copia de seguridad de su directorio personal: " USUARIO
+
+    # Se comprueba si el usuario especificado existe en el sistema
+    if id "$USUARIO" >/dev/null 2>&1; then
+        # Comprobación de que existe el directorio que contendrá las copias de seguridad
+        if [ ! -d $DIRECTORIO_COPIAS_SEGURIDAD ]; then
+            # Creación del directorio que contendrá las copias de seguridad
+            sudo mkdir -p $DIRECTORIO_COPIAS_SEGURIDAD
+
+            # Se muestra la creación del directorio que contendrá las copias de seguridad
+            echo "Se ha creado el directorio $DIRECTORIO_COPIAS_SEGURIDAD"
+            echo ""
+            echo "Contenido del directorio raíz:"
+            ls /
+        fi
+
+        # Se obtiene la ruta del directorio personal del usuario
+        RUTA_DIRECTORIO_USUARIO=$(eval echo "~$USUARIO")
+
+        # Se guarda en variable el nombre que tendrá el archivo comprimido del directorio personal del usuario con el nombre, fecha y hora 
+        NOMBRE_BACKUP="$USUARIO-home_$(date +%Y%m%d_%H%M%S).tar.gz"
+
+        # Se realiza la compresión del contenido del directorio personal del usuario
+        sudo tar -czvf $DIRECTORIO_COPIAS_SEGURIDAD/$NOMBRE_BACKUP $RUTA_DIRECTORIO_USUARIO
+
+        # Se muestra un mensaje y el contenido del directorio que contiene las copias de seguridad
+        echo ""
+        echo "Archivos del directorio $DIRECTORIO_COPIAS_SEGURIDAD:"
+        echo ""
+        ls $DIRECTORIO_COPIAS_SEGURIDAD
+
+    # En caso de no existir el usuario en el sistema, muestra dicho mensaje
+    else
+        echo "El usuario $USUARIO no existe en el sistema"
+    fi
+    
 }
 
 
@@ -224,10 +325,10 @@ while [ $OPCN_USUARIO != "9" ]; do
         7) espacio_libre_disco;;
         8) trazado_ruta;;
         9) echo "" && echo "Ejecución finalizada";;
-        *) echo "" && echo "Se ha equivocado de número"
+        *) echo "" && echo "Se ha equivocado de número";;
     esac
 
-    if [[ $OPCN_USUARIO != "9" ]]; then
+    if [ $OPCN_USUARIO != "9" ]; then
         sleep 2s
 
         echo ""
