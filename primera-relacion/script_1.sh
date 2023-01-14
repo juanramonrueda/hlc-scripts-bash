@@ -287,19 +287,33 @@ function copia_seguridad_usuario(){
 
 # Usuarios conectados en el sistema
 function usuarios_conectados_sistema(){
-    echo "hola"
+    who
 }
 
 
 # Espacio libre en el disco duro
 function espacio_libre_disco(){
-    echo "hola"
+    # Se muestran todas las particiones para discos duros
+    ls /dev/sd*
+
+    # Se pide que el usuario introduzca la partición de la que quiere obtener su espacio libre
+    read -p "Introduzca la partición de la que quiere obtener su espacio libre: " PARTICION
+
+    # Con el comando df se muestra la partición para "human-readable" y con output se selecciona la fuente y el espacio disponible
+    df -h $PARTICION --output=source,avail
 }
 
 
 # Trazado de ruta desde el origen hasta la IP o URL de destino
 function trazado_ruta(){
-    echo "hola"
+    COMPROBACION_TRACEROUTE=$(apt list git | grep "installed")
+
+    if [ $COMPROBACION_TRACEROUTE == "*installed*" ]; then
+        echo "Traceroute está instalado"
+    
+    else
+        echo "traceroute no está instalado"
+    fi
 }
 
 
