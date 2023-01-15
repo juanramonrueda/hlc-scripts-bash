@@ -314,10 +314,10 @@ function trazado_ruta(){
         traceroute $IP_URL
     
     else
-        echo "Traceroute no está instalado y se procederá con la instalación (posiblemente se necesite introducir la contraseña)"
+        echo "Traceroute no está instalado y se procederá con la instalación (posiblemente se necesite introducir contraseña)"
         sleep2s
         echo ""
-        sudo apt update && sudo apt install traceroute
+        sudo apt update && sudo apt install traceroute -y
 
         echo ""
         read -p "Introduzca la IP o URL a la que quiere hacer el trazado" IP_URL
