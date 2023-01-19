@@ -81,7 +81,7 @@ function habilitar_usuarios(){
     
     # En el caso de que empiece por "!", se habilitará el usuario
     else
-        usermod -U $NOMBRE_USUARIO
+        passwd -u $NOMBRE_USUARIO
 
         echo "El usuario se ha habilitado"
     fi
@@ -92,7 +92,7 @@ function habilitar_usuarios(){
 function deshabilitar_usuarios() {
     read -p "Introduzca el usuario que quiere deshabilitar: " NOMBRE_USUARIO
 
-    usermod -L $NOMBRE_USUARIO
+    passwd -l $NOMBRE_USUARIO
 }
 
 
