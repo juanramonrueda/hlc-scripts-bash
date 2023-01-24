@@ -1,14 +1,14 @@
 #!/bin/bash
 
 
-#--------------------------------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------------------------------------------------------
 # Declaración de variables
 
 # Variable para entrar en el bucle sin tener que preguntar fuera del mismo
 OPCN_USUARIO=1
 
 
-#--------------------------------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------------------------------------------------------
 # Definición de funciones
 
 # Limpieza de pantalla
@@ -109,7 +109,7 @@ function permisos_fichero(){
     read -p "Introduzca la ruta absoluta del fichero al que quiere cambiar los permisos: " RUTA_NOMBRE_FICHERO
 
     # Obtención de la cantidad de niveles hasta llegar al archivo mediante el conteo del símbolo "/"
-    CANTIDAD_NIVELES=$(echo "$RUTA_NOMBRE_FICHERO" | grep -o "/" | wc -l)
+    CANTIDAD_NIVELES=$( echo "$RUTA_NOMBRE_FICHERO" | grep -o "/" | wc -l )
 
     # Se recorren los niveles para realizar un cut -f y obtener la ruta en la que se encuentra el archivo
     for NIVELES in `seq 1 1 $CANTIDAD_NIVELES`
@@ -119,16 +119,16 @@ function permisos_fichero(){
     done
 
     # Se obtiene en variable la ruta del archivo, sin agregar a la variable el archivo
-    RUTA_FICHERO=$(echo "$RUTA_NOMBRE_FICHERO" | cut -d "/" -f $LISTADO_NIVELES)
+    RUTA_FICHERO=$( echo "$RUTA_NOMBRE_FICHERO" | cut -d "/" -f $LISTADO_NIVELES )
 
     # Se guarda en variable el número del nivel en el que se encuentra el archivo
-    NIVEL_FICHERO=$(($CANTIDAD_NIVELES+1))
+    NIVEL_FICHERO=$(( $CANTIDAD_NIVELES + 1 ))
 
     # Se obtiene únicamente el nombre del archivo en variable usando la operación anterior
-    NOMBRE_FICHERO=$(echo "$RUTA_NOMBRE_FICHERO" | cut -d "/" -f $NIVEL_FICHERO)
+    NOMBRE_FICHERO=$( echo "$RUTA_NOMBRE_FICHERO" | cut -d "/" -f $NIVEL_FICHERO )
 
     # Se guarda en variable el nivel del directorio que contiene el archivo 
-    COMPROBACION_DIRECTORIO_NIVEL=$(($CANTIDAD_NIVELES-1))
+    COMPROBACION_DIRECTORIO_NIVEL=$(( $CANTIDAD_NIVELES - 1 ))
 
     # Se recorren los niveles para realizar un cut -f y obtener la ruta del directorio del archivo
     for NIVELES in `seq 1 1 $COMPROBACION_DIRECTORIO_NIVEL`
@@ -138,17 +138,17 @@ function permisos_fichero(){
     done
 
     # Se obtiene en variable la ruta del directorio que puede dar fallos por un error al escribirlo
-    COMPROBACION_DIRECTORIO_EXISTENCIA=$(echo "$RUTA_NOMBRE_FICHERO" | cut -d "/" -f $COMPROBACION_DIRECTORIO)
+    COMPROBACION_DIRECTORIO_EXISTENCIA=$( echo "$RUTA_NOMBRE_FICHERO" | cut -d "/" -f $COMPROBACION_DIRECTORIO )
 
     # Se comprueba si la ruta y el archivo introducido por el usuario existe
     if test -e $RUTA_NOMBRE_FICHERO ; then
 
         # Se muestran los permisos actuales del fichero que se quiere modificar
-        echo "Permisos de Usuario: "$(ls -ld $RUTA_NOMBRE_FICHERO | cut -c 2-4)
+        echo "Permisos de Usuario: "$( ls -ld $RUTA_NOMBRE_FICHERO | cut -c 2-4 )
         echo ""
-        echo "Permisos de Grupo: "$(ls -ld $RUTA_NOMBRE_FICHERO | cut -c 5-7)
+        echo "Permisos de Grupo: "$( ls -ld $RUTA_NOMBRE_FICHERO | cut -c 5-7 )
         echo ""
-        echo "Permisos de Otros: "$(ls -ld $RUTA_NOMBRE_FICHERO | cut -c 8-10)
+        echo "Permisos de Otros: "$( ls -ld $RUTA_NOMBRE_FICHERO | cut -c 8-10 )
         echo ""
         echo "r => Lectura | w => Escritura | x => Ejecución | - => Sin permiso"
         echo ""
@@ -166,7 +166,7 @@ function permisos_fichero(){
                 read -p "Introduzca los permisos de $GRUPOS: " PERMISOS
 
                 # Se convierten los permisos introducidos por el usuario a mayúsculas para que funcione el CASE
-                PERMISOS_MAY=$(echo $PERMISOS | tr [a-z] [A-Z])
+                PERMISOS_MAY=$( echo $PERMISOS | tr [a-z] [A-Z] )
                 echo ""
 
                 # Cuando entre el FOR en Usuario, realizará los cambios introducidos por el usuario
@@ -211,11 +211,14 @@ function permisos_fichero(){
             done
 
             # Se muestran los nuevos permisos del fichero al usuario para comprobación de los cambios
-            echo "Permisos del Usuario: "$(ls -ld $RUTA_NOMBRE_FICHERO | cut -c 2-4)
             echo ""
-            echo "Permisos del Grupo: "$(ls -ld $RUTA_NOMBRE_FICHERO | cut -c 5-7)
+            echo "Los nuevos permisos del fichero $RUTA_NOMBRE_FICHERO son:"
             echo ""
-            echo "Permisos de Otros: "$(ls -ld $RUTA_NOMBRE_FICHERO | cut -c 8-10)
+            echo "Permisos del Usuario: "$( ls -ld $RUTA_NOMBRE_FICHERO | cut -c 2-4 )
+            echo ""
+            echo "Permisos del Grupo: "$( ls -ld $RUTA_NOMBRE_FICHERO | cut -c 5-7 )
+            echo ""
+            echo "Permisos de Otros: "$( ls -ld $RUTA_NOMBRE_FICHERO | cut -c 8-10 )
             echo ""
 
         # En el caso de que el usuario no quiera realizar cambios en los permisos, se muestra el mensaje
@@ -227,17 +230,17 @@ function permisos_fichero(){
     else
         # En el caso de que no exista el fichero en la ruta, mostrará los directorios y archivo del nivel
         if test -e $RUTA_FICHERO ; then
-            echo "El archivo $NOMBRE_FICHERO existe en la ruta" $RUTA_FICHERO
+            echo "El archivo $NOMBRE_FICHERO no existe en la ruta" $RUTA_FICHERO
             echo ""
             echo "Estos son los ficheros y directorios que se encuentran en la ruta:"
-            ls -l $RUTA_FICHERO
+            ls -l $RUTA_FICHERO | cut -d " " -f 9
 
         # En el caso de que no exista la ruta del directorio, mostrará los directorios que contiene el nivel anterior
         else
             echo "No existe la ruta en la que se encuentra el archivo, posiblemente tiene un error"
             echo ""
             echo "Estos son los directorios y archivos del nivel anterior al fallo:"
-            ls -l $COMPROBACION_DIRECTORIO_EXISTENCIA
+            ls -l $COMPROBACION_DIRECTORIO_EXISTENCIA | cut -d " " -f 9
         fi
     fi
 }
@@ -253,7 +256,7 @@ function copia_seguridad_usuario(){
     # Se comprueba si el usuario especificado existe en el sistema
     if id "$USUARIO" >/dev/null 2>&1; then
         # Comprobación de que existe el directorio que contendrá las copias de seguridad
-        if [ ! -d $DIRECTORIO_COPIAS_SEGURIDAD ]; then
+        if [[ ! -d $DIRECTORIO_COPIAS_SEGURIDAD ]]; then
             # Creación del directorio que contendrá las copias de seguridad
             mkdir -p $DIRECTORIO_COPIAS_SEGURIDAD
 
@@ -265,7 +268,7 @@ function copia_seguridad_usuario(){
         fi
 
         # Se obtiene la ruta del directorio personal del usuario
-        RUTA_DIRECTORIO_USUARIO=$(eval echo "~$USUARIO")
+        RUTA_DIRECTORIO_USUARIO=$( eval echo "~$USUARIO" )
 
         # Se guarda en variable el nombre que tendrá el archivo comprimido del directorio personal del usuario con el nombre, fecha y hora 
         NOMBRE_BACKUP="$USUARIO-home_$(date +%Y%m%d_%H%M%S).tar.gz"
@@ -311,12 +314,12 @@ function trazado_ruta(){
     OPENSUSE_NAME='NAME="SLES"'
 
     # Guardado en variable del nombre filtrado del sistema operativo
-    OPERATIVE_SYSTEM=$(cat /etc/os-release | grep -w NAME)
+    OPERATIVE_SYSTEM=$( cat /etc/os-release | grep -w NAME )
 
     # Comprobación del sistema operativo que se ha guardado en variable
     if [ "$OPERATIVE_SYSTEM" == "$OPENSUSE_NAME" ]; then
         # Guardado en variable del estado de traceroute en OpenSUSE
-        COMPROBACION_TRACEROUTE_SUSE=$(zypper search traceroute | grep traceroute | cut -d "|" -f 1)
+        COMPROBACION_TRACEROUTE_SUSE=$( zypper search traceroute | grep traceroute | cut -d "|" -f 1 )
 
         if [[ $COMPROBACION_TRACEROUTE_SUSE == "i+" ]]; then
             # Petición de la IP o URL
@@ -345,10 +348,11 @@ function trazado_ruta(){
 
             # Trazado de la IP o URL pedida
             traceroute $IP_URL
+        fi
 
     else
         # Guardado en variable del estado de traceroute
-        COMPROBACION_TRACEROUTE=$(apt list traceroute | grep "instalado" | cut -c 1-10)
+        COMPROBACION_TRACEROUTE=$( apt list traceroute | grep "instalado" | cut -c 1-10 )
 
         # En el caso de que traceroute esté instalado, procederá con la pregunta sobre la IP o URL
         if [[ $COMPROBACION_TRACEROUTE == "traceroute" ]]; then
@@ -387,7 +391,7 @@ function trazado_ruta(){
 
 # Declaración de la función principal
 function main() {
-    while [ $OPCN_USUARIO != "9" ]; do
+    while [[ $OPCN_USUARIO != "9" ]]; do
         limpiar_pantalla
         
         mostrar_menu
@@ -410,7 +414,7 @@ function main() {
         esac
 
         # En el caso de que la entrada de la opción sea distinta de "9", hará una pequeña espera y pedirá una pulsación de tecla
-        if [ $OPCN_USUARIO != "9" ]; then
+        if [[ $OPCN_USUARIO != "9" ]]; then
             sleep 2s
 
             echo ""
@@ -421,7 +425,7 @@ function main() {
 }
 
 
-#--------------------------------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------------------------------------------------------
 # Ejecución de la función "main"
 
 # Con BASH_SOURCE[0] se obtiene la ruta de la ejecución del script que en el caso de coincidir con el nombre del script, se procederá
