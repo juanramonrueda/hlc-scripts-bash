@@ -1,14 +1,14 @@
 #!/bin/bash
 
 
-#-----------------------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------------------------------------------
 # Declaración de variables
 
 # Variable para entrar en el bucle sin tener que preguntar fuera del mismo
 OPCN_USUARIO=1
 
 
-#-----------------------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------------------------------------------
 # Definición de funciones
 
 # Limpieza de pantalla
@@ -18,6 +18,8 @@ function limpiar_pantalla(){
 
 # Se muestra el menú con las opciones disponibles
 function mostrar_menu() {
+    echo "Este script necesita permisos de sudo para que algunas funcionalidades se ejecuten correctamente"
+
     echo "Opciones:"
 
     # Se tabulan para el formateo de salida
@@ -253,7 +255,7 @@ function copia_seguridad_usuario(){
         # Comprobación de que existe el directorio que contendrá las copias de seguridad
         if [ ! -d $DIRECTORIO_COPIAS_SEGURIDAD ]; then
             # Creación del directorio que contendrá las copias de seguridad
-            sudo mkdir -p $DIRECTORIO_COPIAS_SEGURIDAD
+            mkdir -p $DIRECTORIO_COPIAS_SEGURIDAD
 
             # Se muestra la creación del directorio que contendrá las copias de seguridad
             echo "Se ha creado el directorio $DIRECTORIO_COPIAS_SEGURIDAD"
@@ -269,7 +271,7 @@ function copia_seguridad_usuario(){
         NOMBRE_BACKUP="$USUARIO-home_$(date +%Y%m%d_%H%M%S).tar.gz"
 
         # Se realiza la compresión del contenido del directorio personal del usuario
-        sudo tar -czvf $DIRECTORIO_COPIAS_SEGURIDAD/$NOMBRE_BACKUP $RUTA_DIRECTORIO_USUARIO
+        tar -czvf $DIRECTORIO_COPIAS_SEGURIDAD/$NOMBRE_BACKUP $RUTA_DIRECTORIO_USUARIO
 
         # Se muestra un mensaje y el contenido del directorio que contiene las copias de seguridad
         echo ""
@@ -305,60 +307,126 @@ function espacio_libre_disco(){
 
 # Trazado de ruta desde el origen hasta la IP o URL de destino
 function trazado_ruta(){
-    COMPROBACION_TRACEROUTE=$(apt list traceroute | grep "instalado" | cut -c 1-10)
+    # Declaración de variable para OpenSUSE
+    OPENSUSE_NAME='NAME="SLES"'
 
-    if [ $COMPROBACION_TRACEROUTE == "traceroute" ]; then
-        read -p "Introduzca la IP o URL a la que quiere hacer el trazado" IP_URL
-        echo ""
+    # Guardado en variable del nombre filtrado del sistema operativo
+    OPERATIVE_SYSTEM=$(cat /etc/os-release | grep -w NAME)
 
-        traceroute $IP_URL
-    
+    # Comprobación del sistema operativo que se ha guardado en variable
+    if [ "$OPERATIVE_SYSTEM" == "$OPENSUSE_NAME" ]; then
+        # Guardado en variable del estado de traceroute en OpenSUSE
+        COMPROBACION_TRACEROUTE_SUSE=$(zypper search traceroute | grep traceroute | cut -d "|" -f 1)
+
+        if [[ $COMPROBACION_TRACEROUTE_SUSE == "i+" ]]; then
+            # Petición de la IP o URL
+            read -p "Introduzca la IP o URL a la que quiere hacer el trazado " IP_URL
+            echo ""
+
+            # Trazado de la IP o URL pedida
+            traceroute $IP_URL
+        
+        # En el caso de que traceroute no esté instalado, procederá con la instalación de traceroute
+        else
+            echo "Traceroute no está instalado y se procederá con la instalación (posiblemente se necesite introducir contraseña)"
+            
+            # Pequeña parada de tres segundos para leer el anterior mensaje
+            sleep 3s
+            echo ""
+
+            # Actualización de los repositorios e instalación de traceroute desatendida
+            zypper refresh && zypper -n install traceroute
+
+            echo ""
+            
+            # Petición de la IP o URL a la que hacer el trazado
+            read -p "Introduzca la IP o URL a la que quiere hacer el trazado " IP_URL
+            echo ""
+
+            # Trazado de la IP o URL pedida
+            traceroute $IP_URL
+
     else
-        echo "Traceroute no está instalado y se procederá con la instalación (posiblemente se necesite introducir contraseña)"
-        sleep2s
-        echo ""
-        sudo apt update && sudo apt install traceroute -y
+        # Guardado en variable del estado de traceroute
+        COMPROBACION_TRACEROUTE=$(apt list traceroute | grep "instalado" | cut -c 1-10)
 
-        echo ""
-        read -p "Introduzca la IP o URL a la que quiere hacer el trazado" IP_URL
-        echo ""
+        # En el caso de que traceroute esté instalado, procederá con la pregunta sobre la IP o URL
+        if [[ $COMPROBACION_TRACEROUTE == "traceroute" ]]; then
+            # Petición de la IP o URL
+            read -p "Introduzca la IP o URL a la que quiere hacer el trazado " IP_URL
+            echo ""
 
-        traceroute $IP_URL
+            # Trazado de la IP o URL pedida
+            traceroute $IP_URL
+        
+        # En el caso de que no esté instalado traceroute, se procederá con la instalación de traceroute
+        else
+            echo "Traceroute no está instalado y se procederá con la instalación (posiblemente se necesite introducir contraseña)"
+            
+            # Pequeña parada de tres segundos para leer el anterior mensaje
+            sleep 3s
+            echo ""
+            
+            # Actualización de los repositorios e instalación de traceroute desatendida
+            apt update && apt install traceroute -y
 
+            echo ""
+            
+            # Petición de la IP o URL a la que hacer el trazado
+            read -p "Introduzca la IP o URL a la que quiere hacer el trazado " IP_URL
+            echo ""
+
+            # Trazado de la IP o URL pedida
+            traceroute $IP_URL
+
+        fi
+    
     fi
 }
 
 
-#-----------------------------------------------------------------------------------------------------------------
-# Ejecución del script
-
-while [ $OPCN_USUARIO != "9" ]; do
-    limpiar_pantalla
-    
-    mostrar_menu
-    
-    echo ""
-    read -n 1 -p "Seleccione una opción: " OPCN_USUARIO
-    echo ""
-
-    case $OPCN_USUARIO in
-        1) crear_usuario;;
-        2) habilitar_usuarios;;
-        3) deshabilitar_usuarios;;
-        4) permisos_fichero;;
-        5) copia_seguridad_usuario;;
-        6) usuarios_conectados_sistema;;
-        7) espacio_libre_disco;;
-        8) trazado_ruta;;
-        9) echo "" && echo "Ejecución finalizada";;
-        *) echo "" && echo "Se ha equivocado de número";;
-    esac
-
-    if [ $OPCN_USUARIO != "9" ]; then
-        sleep 2s
-
+# Declaración de la función principal
+function main() {
+    while [ $OPCN_USUARIO != "9" ]; do
+        limpiar_pantalla
+        
+        mostrar_menu
+        
         echo ""
-        read -n 1 -p "Pulse una tecla para continuar..."
-    
-    fi
-done
+        read -n 1 -p "Seleccione una opción: " OPCN_USUARIO
+        echo ""
+
+        case $OPCN_USUARIO in
+            1) crear_usuario;;
+            2) habilitar_usuarios;;
+            3) deshabilitar_usuarios;;
+            4) permisos_fichero;;
+            5) copia_seguridad_usuario;;
+            6) usuarios_conectados_sistema;;
+            7) espacio_libre_disco;;
+            8) trazado_ruta;;
+            9) echo "" && echo "Ejecución finalizada";;
+            *) echo "" && echo "Se ha equivocado de número";;
+        esac
+
+        # En el caso de que la entrada de la opción sea distinta de "9", hará una pequeña espera y pedirá una pulsación de tecla
+        if [ $OPCN_USUARIO != "9" ]; then
+            sleep 2s
+
+            echo ""
+            read -n 1 -p "Pulse una tecla para continuar..."
+        
+        fi
+    done
+}
+
+
+#--------------------------------------------------------------------------------------------------------------------------------------
+# Ejecución de la función "main"
+
+# Con BASH_SOURCE[0] se obtiene la ruta de la ejecución del script que en el caso de coincidir con el nombre del script, se procederá
+# a la ejecución de la función que contiene dentro
+
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    main "$@"
+fi
