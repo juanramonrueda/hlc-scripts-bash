@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-#------------------------------------------------------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------------------------------------------------------------
 # Declaración de variables
 
 # Variable que contiene una expresión regular para comprobar que se introducen únicamente números (enteros, decimales...)
@@ -20,7 +20,7 @@ export SEGUNDO_ARGUMENTO="$2"
 export TERCER_ARGUMENTO="$3"
 
 
-#------------------------------------------------------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------------------------------------------------------------
 # Declaración de funciones
 
 # Función para limpiar la pantalla antes de realizar las operaciones necesarias
@@ -81,11 +81,31 @@ function calculadora() {
 
     # En el caso de que el tercer argumento sea para realizar la división y obtener el cociente, llamará a la función que realiza la operación
     elif [[ $TERCER_ARGUMENTO == '/' ]]; then
-        division
+        if [[ $SEGUNDO_ARGUMENTO != '0' ]];then
+            division
+
+        # En el caso de que el tercer argumento sea la división y el segundo argumento un 0, saldrá de la ejecución
+        else
+            echo "Si desea realizar la división de $PRIMER_ARGUMENTO entre $SEGUNDO_ARGUMENTO, el $SEGUNDO_ARGUMENTO tiene que ser distinto de 0"
+            echo ""
+            sleep 2s
+            echo "Finalizando la ejecución..."
+            exit
+        fi
 
     # En el caso de que el tercer argumento sea para realizar la división y obtener el resto, llamará a la función que realiza la operación
     elif [[ $TERCER_ARGUMENTO == '%' ]]; then
-        modulo
+        if [[ $SEGUNDO_ARGUMENTO != '0' ]];then
+           modulo
+
+        # En el caso de que el tercer argumento sea la división y el segundo argumento un 0, saldrá de la ejecución
+        else
+            echo "Si desea realizar la división de $PRIMER_ARGUMENTO entre $SEGUNDO_ARGUMENTO, el $SEGUNDO_ARGUMENTO tiene que ser distinto de 0"
+            echo ""
+            sleep 2s
+            echo "Finalizando la ejecución..."
+            exit
+        fi
     fi
 }
 
@@ -124,19 +144,26 @@ function main() {
         fi
 
     # En el caso de que los argumentos pasados no sean igual a tres, se finalizará por defecto la ejecución
-    else
+    elif [[ $# -lt "3" || $# -gt "3" ]]; then
         # Mensajes para el usuario
         echo "Solo se pueden pasar tres argumentos, usted ha pasado: $#"
         echo ""
         echo "Finalizando la ejecución..."
         
         # Parada de dos segundos
+        sleep 3s
+
+    # En el caso de que el tercer argumento sea un fichero, indicará al usuario que tiene que usar un carácter de escape para
+    # evitar que el * sea un wildcard (comodín) y se tome como símbolo
+    elif test -e $3 || test -d $3 ; then
+        echo "Para hacer la multiplicación, tiene que usar backslash (\) o barra invertida junto al asterisk (*) o asterísco --> ./script_1.sh 5 3 \*"
         sleep 2s
+        echo ""
     fi
 }
 
 
-#------------------------------------------------------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------------------------------------------------------------
 # Ejecución de la función "main"
 
 # Con BASH_SOURCE[0] se obtiene la ruta de la ejecución del script que en el caso de coincidir con el nombre del script,
