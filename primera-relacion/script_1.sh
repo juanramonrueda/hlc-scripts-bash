@@ -40,12 +40,8 @@ function crear_usuario(){
     # Petición del nombre de usuario que hay que crear
     read -p "Introduzca el nombre del usuario que quiere crear: " NOMBRE_USUARIO
     
-    # Salida vistosa y que no quede todo compactado
-    echo ""
-    
     # Se usa -n 1 para no tener que pulsar la tecla Intro y continuar en cuanto se introduzca un carácter
-    read -n 1 -p "¿Quiere crear el usuario con directorio personal? (S/N): " RESPUESTA
-    echo ""
+    echo "" && read -n 1 -p "¿Quiere crear el usuario con directorio personal? (S/N): " RESPUESTA
 
     # Comprobación si el usuario tendrá o no directorio personal
     if [[ $RESPUESTA == "s" || $RESPUESTA == "S" ]]; then
@@ -57,7 +53,7 @@ function crear_usuario(){
         useradd $NOMBRE_USUARIO
 
         # Se indica que se introduzca una contraseña para el usuario creado
-        echo "Introduzca la contraseña para el usuario"
+        echo "" && echo "Introduzca la contraseña para el usuario"
         
         # Se ejecuta el comando para asignar una contraseña al usuario creado
         passwd $NOMBRE_USUARIO
@@ -65,8 +61,7 @@ function crear_usuario(){
     fi
 
     # Se muestra el último registro para mostrar el usuario creado
-    echo ""
-    tail -n -1 /etc/passwd
+    echo "" && tail -n -1 /etc/passwd
 }
 
 
@@ -144,30 +139,27 @@ function permisos_fichero(){
     if test -e $RUTA_NOMBRE_FICHERO ; then
 
         # Se muestran los permisos actuales del fichero que se quiere modificar
-        echo "Permisos de Usuario: "$( ls -ld $RUTA_NOMBRE_FICHERO | cut -c 2-4 )
-        echo ""
-        echo "Permisos de Grupo: "$( ls -ld $RUTA_NOMBRE_FICHERO | cut -c 5-7 )
-        echo ""
-        echo "Permisos de Otros: "$( ls -ld $RUTA_NOMBRE_FICHERO | cut -c 8-10 )
-        echo ""
-        echo "r => Lectura | w => Escritura | x => Ejecución | - => Sin permiso"
-        echo ""
-        read -n 1 -p "¿Quiere cambiar los permisos? (S/N): " RESPUESTA
-        echo ""
+        echo "" && echo "Permisos de Usuario: "$( ls -ld $RUTA_NOMBRE_FICHERO | cut -c 2-4 )
+
+        echo "" && echo "Permisos de Grupo: "$( ls -ld $RUTA_NOMBRE_FICHERO | cut -c 5-7 )
+        
+        echo "" && echo "Permisos de Otros: "$( ls -ld $RUTA_NOMBRE_FICHERO | cut -c 8-10 )
+        
+        echo "" && echo "r => Lectura | w => Escritura | x => Ejecución | - => Sin permiso"
+        
+        echo "" && read -n 1 -p "¿Quiere cambiar los permisos? (S/N): " RESPUESTA
 
         # Se comprueba si el usuario quiere cambiar los permisos
         if [[ $RESPUESTA = "S" || $RESPUESTA = "s" ]] ; then
             echo "Escriba las letras (en el orden anterior establecido) o símbolos para asignar los permisos"
-            echo ""
 
             # Se recorren los tres tipos de grupos de permisos que tiene un archivo o directorio
             for GRUPOS in Usuario Grupo Otros ; do
                 # Se pregunta por los permisos que quiere poner al fichero
-                read -p "Introduzca los permisos de $GRUPOS: " PERMISOS
+                echo "" && read -p "Introduzca los permisos de $GRUPOS: " PERMISOS
 
                 # Se convierten los permisos introducidos por el usuario a mayúsculas para que funcione el CASE
                 PERMISOS_MAY=$( echo $PERMISOS | tr [a-z] [A-Z] )
-                echo ""
 
                 # Cuando entre el FOR en Usuario, realizará los cambios introducidos por el usuario
                 if [ $GRUPOS = Usuario ] ; then
@@ -211,19 +203,17 @@ function permisos_fichero(){
             done
 
             # Se muestran los nuevos permisos del fichero al usuario para comprobación de los cambios
-            echo ""
-            echo "Los nuevos permisos del fichero $RUTA_NOMBRE_FICHERO son:"
-            echo ""
-            echo "Permisos del Usuario: "$( ls -ld $RUTA_NOMBRE_FICHERO | cut -c 2-4 )
-            echo ""
-            echo "Permisos del Grupo: "$( ls -ld $RUTA_NOMBRE_FICHERO | cut -c 5-7 )
-            echo ""
-            echo "Permisos de Otros: "$( ls -ld $RUTA_NOMBRE_FICHERO | cut -c 8-10 )
-            echo ""
+            echo "" && echo "Los nuevos permisos del fichero $RUTA_NOMBRE_FICHERO son:"
+
+            echo "" && echo "Permisos del Usuario: "$( ls -ld $RUTA_NOMBRE_FICHERO | cut -c 2-4 )
+            
+            echo "" && echo "Permisos del Grupo: "$( ls -ld $RUTA_NOMBRE_FICHERO | cut -c 5-7 )
+            
+            echo "" && echo "Permisos de Otros: "$( ls -ld $RUTA_NOMBRE_FICHERO | cut -c 8-10 )
 
         # En el caso de que el usuario no quiera realizar cambios en los permisos, se muestra el mensaje
         else
-            echo "Los permisos del fichero no han sufrido modificación alguna"
+            echo "" && echo "Los permisos del fichero no han sufrido modificación alguna"
         fi
         
     # En el caso de que haya algún error al introducir la ruta del fichero se mostrará el posible error
@@ -231,15 +221,15 @@ function permisos_fichero(){
         # En el caso de que no exista el fichero en la ruta, mostrará los directorios y archivo del nivel
         if test -e $RUTA_FICHERO ; then
             echo "El archivo $NOMBRE_FICHERO no existe en la ruta" $RUTA_FICHERO
-            echo ""
-            echo "Estos son los ficheros y directorios que se encuentran en la ruta:"
+
+            echo "" && echo "Estos son los ficheros y directorios que se encuentran en la ruta:"
             ls -l $RUTA_FICHERO | cut -d " " -f 9
 
         # En el caso de que no exista la ruta del directorio, mostrará los directorios que contiene el nivel anterior
         else
-            echo "No existe la ruta en la que se encuentra el archivo, posiblemente tiene un error"
-            echo ""
-            echo "Estos son los directorios y archivos del nivel anterior al fallo:"
+            echo "" && echo "No existe la ruta en la que se encuentra el archivo, posiblemente tiene un error"
+            
+            echo "" && echo "Estos son los directorios y archivos del nivel anterior al fallo:"
             ls -l $COMPROBACION_DIRECTORIO_EXISTENCIA | cut -d " " -f 9
         fi
     fi
@@ -251,23 +241,25 @@ function copia_seguridad_usuario(){
     DIRECTORIO_COPIAS_SEGURIDAD="/copias_seguridad_usuarios"
 
     # Petición del nombre de usuario para realizar la copia de seguridad de su directorio personal
-    read -p "Introduzca el nombre del usuario del cuál quiere hacer una copia de seguridad de su directorio personal: " USUARIO
+    echo "" && read -p "Introduzca el nombre del usuario del cuál quiere hacer una copia de seguridad de su directorio personal: " USUARIO
 
-    # Se comprueba si el usuario especificado existe en el sistema
+    # Se comprueba si el usuario especificado existe en el sistema, redirigiendo la salida normal (1) y de error (2) a null
+    # Con id "$USUARIO" se muestra información sobre el usuario y en caso de existir, entra en el IF
     if id "$USUARIO" >/dev/null 2>&1; then
-        # Comprobación de que existe el directorio que contendrá las copias de seguridad
+
+        # Comprobación de la existencia del directorio que contendrá las copias de seguridad
+        # En este caso comprueba de que no existe mediante "!" y -d para directorios
         if [[ ! -d $DIRECTORIO_COPIAS_SEGURIDAD ]]; then
+
             # Creación del directorio que contendrá las copias de seguridad
             mkdir -p $DIRECTORIO_COPIAS_SEGURIDAD
 
             # Se muestra la creación del directorio que contendrá las copias de seguridad
-            echo "Se ha creado el directorio $DIRECTORIO_COPIAS_SEGURIDAD"
-            echo ""
-            echo "Contenido del directorio raíz:"
-            ls /
+            echo "" && echo "Se ha creado el directorio $DIRECTORIO_COPIAS_SEGURIDAD"
         fi
 
-        # Se obtiene la ruta del directorio personal del usuario
+        # Se obtiene la ruta del directorio personal del usuario mediante echo "~$USUARIO"
+        # El comando "eval" se usa para evaluar la expresión siguiente al comando y obtener la ruta
         RUTA_DIRECTORIO_USUARIO=$( eval echo "~$USUARIO" )
 
         # Se guarda en variable el nombre que tendrá el archivo comprimido del directorio personal del usuario con el nombre, fecha y hora 
@@ -277,14 +269,14 @@ function copia_seguridad_usuario(){
         tar -czvf $DIRECTORIO_COPIAS_SEGURIDAD/$NOMBRE_BACKUP $RUTA_DIRECTORIO_USUARIO
 
         # Se muestra un mensaje y el contenido del directorio que contiene las copias de seguridad
-        echo ""
-        echo "Archivos del directorio $DIRECTORIO_COPIAS_SEGURIDAD:"
-        echo ""
-        ls $DIRECTORIO_COPIAS_SEGURIDAD
+        echo "" && echo "Archivos del directorio $DIRECTORIO_COPIAS_SEGURIDAD:"
+
+        echo "" && ls $DIRECTORIO_COPIAS_SEGURIDAD
 
     # En caso de no existir el usuario en el sistema, avisa al usuario
     else
-        echo "El usuario $USUARIO no existe en el sistema"
+        
+        echo "" && echo "El usuario $USUARIO no existe en el sistema"
     fi
 }
 
@@ -301,10 +293,10 @@ function espacio_libre_disco(){
     ls /dev/sd*
 
     # Se pide que el usuario introduzca la partición de la que quiere obtener su espacio libre
-    read -p "Introduzca la partición de la que quiere obtener su espacio libre: " PARTICION
+    echo "" && read -p "Introduzca la partición de la que quiere obtener su espacio libre: " PARTICION
 
     # Con el comando df se muestra la partición para "human-readable" y con output se selecciona la fuente y el espacio disponible
-    df -h $PARTICION --output=source,avail
+    echo "" && df -h $PARTICION --output=source,avail
 }
 
 
@@ -323,33 +315,29 @@ function trazado_ruta(){
 
         if [[ $COMPROBACION_TRACEROUTE_SUSE == "i+" ]]; then
             # Petición de la IP o URL
-            read -p "Introduzca la IP o URL a la que quiere hacer el trazado " IP_URL
-            echo ""
+            echo "" && read -p "Introduzca la IP o URL a la que quiere hacer el trazado " IP_URL
 
             # Trazado de la IP o URL pedida
             traceroute $IP_URL
         
         # En el caso de que traceroute no esté instalado, procederá con la instalación de traceroute
         else
-            echo "Traceroute no está instalado y se procederá con la instalación (posiblemente se necesite introducir contraseña)"
+            echo "" && echo "Traceroute no está instalado y se procederá con la instalación (posiblemente se necesite introducir contraseña)"
             
             # Pequeña parada de tres segundos para leer el anterior mensaje
             sleep 3s
-            echo ""
 
             # Actualización de los repositorios e instalación de traceroute desatendida
             zypper refresh && zypper -n install traceroute
-
-            echo ""
             
             # Petición de la IP o URL a la que hacer el trazado
-            read -p "Introduzca la IP o URL a la que quiere hacer el trazado " IP_URL
-            echo ""
+            echo "" && read -p "Introduzca la IP o URL a la que quiere hacer el trazado " IP_URL
 
             # Trazado de la IP o URL pedida
-            traceroute $IP_URL
+            echo "" && traceroute $IP_URL
         fi
 
+    # En el caso de ser distinto de OpenSUSE, entrará en esta condición
     else
         # Guardado en variable del estado de traceroute
         COMPROBACION_TRACEROUTE=$( apt list traceroute | grep "instalado" | cut -c 1-10 )
@@ -357,34 +345,27 @@ function trazado_ruta(){
         # En el caso de que traceroute esté instalado, procederá con la pregunta sobre la IP o URL
         if [[ $COMPROBACION_TRACEROUTE == "traceroute" ]]; then
             # Petición de la IP o URL
-            read -p "Introduzca la IP o URL a la que quiere hacer el trazado " IP_URL
-            echo ""
+            echo "" && read -p "Introduzca la IP o URL a la que quiere hacer el trazado " IP_URL
 
             # Trazado de la IP o URL pedida
             traceroute $IP_URL
         
         # En el caso de que no esté instalado traceroute, se procederá con la instalación de traceroute
         else
-            echo "Traceroute no está instalado y se procederá con la instalación (posiblemente se necesite introducir contraseña)"
+            echo "" && echo "Traceroute no está instalado y se procederá con la instalación (posiblemente se necesite introducir contraseña)"
             
             # Pequeña parada de tres segundos para leer el anterior mensaje
             sleep 3s
-            echo ""
             
             # Actualización de los repositorios e instalación de traceroute desatendida
-            apt update && apt install traceroute -y
-
-            echo ""
+            echo "" && apt update && apt install traceroute -y
             
             # Petición de la IP o URL a la que hacer el trazado
-            read -p "Introduzca la IP o URL a la que quiere hacer el trazado " IP_URL
-            echo ""
+            echo "" && read -p "Introduzca la IP o URL a la que quiere hacer el trazado " IP_URL
 
             # Trazado de la IP o URL pedida
-            traceroute $IP_URL
-
+            echo "" && traceroute $IP_URL
         fi
-    
     fi
 }
 
@@ -392,14 +373,16 @@ function trazado_ruta(){
 # Declaración de la función principal
 function main() {
     while [[ $OPCN_USUARIO != "9" ]]; do
+        # Llamada a la función para limpiar la pantalla
         limpiar_pantalla
         
+        # Llamada a la función para mostrar el menú de opciones al usuario
         mostrar_menu
         
-        echo ""
-        read -n 1 -p "Seleccione una opción: " OPCN_USUARIO
-        echo ""
+        # Petición de una opción al usuario
+        echo "" && read -n 1 -p "Seleccione una opción: " OPCN_USUARIO
 
+        # Comparación de la opción introducida por el usuario con las opciones disponibles y llamada a su función
         case $OPCN_USUARIO in
             1) crear_usuario;;
             2) habilitar_usuarios;;
@@ -417,8 +400,7 @@ function main() {
         if [[ $OPCN_USUARIO != "9" ]]; then
             sleep 2s
 
-            echo ""
-            read -n 1 -p "Pulse una tecla para continuar..."
+            echo "" && read -n 1 -p "Pulse una tecla para continuar..."
         
         fi
     done
