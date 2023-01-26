@@ -24,7 +24,7 @@ export TERCER_ARGUMENTO="$3"
 # Declaración de funciones
 
 # Función para limpiar la pantalla antes de realizar las operaciones necesarias
-function clear_screen() {
+function limpiar_pantalla() {
     clear
 }
 
@@ -113,7 +113,7 @@ function calculadora() {
 # Función principal para validar los argumentos dados
 function main() {
     # Llamada a la función para limpiar la pantalla
-    clear_screen
+    limpiar_pantalla
 
     # En el caso de que los argumentos pasados coincidan con la cantidad de argumentos necesarios, procederá con la ejecución
     if [[ $# == "3" ]]; then

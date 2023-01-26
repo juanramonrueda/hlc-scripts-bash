@@ -25,7 +25,7 @@ OUTPUT_FILE="$2"
 # Declaración de funciones
 
 # Función para limpiar la pantalla
-function clear_screen() {
+function limpiar_pantalla() {
     clear
 }
 
@@ -95,8 +95,8 @@ function generate_output_file_content() {
 
 # Función principal
 function main() {
-    # Llamada a la función "clear_screen"
-    clear_screen
+    # Llamada a la función "limpiar_pantalla"
+    limpiar_pantalla
 
     # Comprobación de la cantidad de argumentos pasados al script
     if [[ $# = "2" ]]; then
