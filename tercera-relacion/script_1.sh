@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-#-------------------------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------------
 # Declaración de variables
 
 # Declaración de la variable como "global" para entrar al bucle de la función
@@ -11,11 +11,14 @@ export X=0
 export CAMPOS_CUT=1
 
 
-#-------------------------------------------------------------------------------------------------------------------------
-# Declaración de función
+#-----------------------------------------------------------------------------------------------------------------
+# Declaración de funciones
 
 # Función principal
-function main(){
+function main() {
+  # Llamada al script para realizar la limpieza de pantalla
+  source clear_screen.sh
+  
   # Mientras el número sea distinto de 99, el bucle continuará
   while [[ $X != 99 ]]; do
     # Petición de valores al usuario
@@ -62,7 +65,7 @@ function main(){
 }
 
 
-#-#-------------------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------------------------------------
 # Ejecución de la función "main"
 
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
