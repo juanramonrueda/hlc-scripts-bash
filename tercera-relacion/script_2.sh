@@ -53,7 +53,7 @@ function main() {
   # Comprobación de la cantidad de argumentos pasados
   if [[ $# != 1 ]]; then
     # Se pone el texto en bold (negrita) mediante \e[1 y se concatena con color, 35m, mediante semicolon
-    echo -e "\e[1;35mNúmero de argumentos incorrecto"
+    echo -e "\e[1;91mNúmero de argumentos incorrecto"
     
     # Llamada a la función que explica cómo funciana el script
     how_works_script
