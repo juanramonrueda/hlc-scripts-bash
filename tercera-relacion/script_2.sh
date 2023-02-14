@@ -43,7 +43,7 @@ function main() {
   source clear_screen.sh
 
   # Comprobación de la cantidad de argumentos pasados
-  if [[ $# != 1 ]]; then
+  if (( $# != 1 )); then
     # Llamada a la función que explica cómo funciona el script
     source how_works_script_1.sh
 

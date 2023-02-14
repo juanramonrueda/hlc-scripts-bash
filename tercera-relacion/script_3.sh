@@ -28,7 +28,7 @@ function main() {
   # Llamada al script para limpiar la pantalla
   source clear_screen.sh
 
-  if [[ $# != 3 ]]; then
+  if (( $# != 3 )); then
     # Llamada a la función que explica cómo funciana el script
     source how_works_script_3.sh
 

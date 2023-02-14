@@ -20,16 +20,16 @@ function main() {
   source clear_screen.sh
   
   # Mientras el número sea distinto de 99, el bucle continuará
-  while [[ $X != 99 ]]; do
+  while (( $X != 99 )); do
     # Petición de valores al usuario
     read -p 'Introduzca el primer número (si quiere finalizar introduzca el 99): ' X
 
     # Si el primer número es distinto de 99, pedirá el segundo para evitar continuar en el caso de que sea 99
-    if [[ $X != 99 ]]; then
+    if (( $X != 99 )); then
       read -p 'Introduzca el segundo número: ' Y
 
       # Si el primer número es mayor que el segundo, se realizará un intercambio de variables
-      if [[ $X > $Y ]]; then
+      if (( $X > $Y )); then
         # Intercambio de variables mediante una variable auxiliar
         AUX=$X
         X=$Y

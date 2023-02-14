@@ -13,7 +13,7 @@ export PRIMER_ARGUMENTO="$1"
 
 # Función principal
 function main() {
-  if [[ $# != 1 ]]; then
+  if (( $# != 1 )); then
     # Llamada al script que contiene la explicación del funcionamiento del script
     source how_works_script_1.sh
   

@@ -19,7 +19,7 @@ export ELEMENTO_ARRAY=1
 
 # Función principal
 function main() {
-  if [[ $# != 1 ]]; then
+  if (( $# != 1 )); then
     # Llamada al script que contiene el funcionamiento correcto
     source how_works_script_1.sh
 
@@ -43,12 +43,12 @@ function main() {
     CANTIDAD_ELEMENTOS_ARRAY=$( echo ${ARRAY[@]} | wc -w )
 
     # Mientras el número introducido por el usuario sea distinto de 0, el bucle continuará
-    while [[ $ELEMENTO_ARRAY != 0 ]]; do
+    while (( $ELEMENTO_ARRAY != 0 )); do
       # Petición de un número para el array
       read -p "Introduzca un número del 1 al $CANTIDAD_ELEMENTOS_ARRAY para conocer la posición de un elemento o pulse el 0 para salir: " ELEMENTO_ARRAY
 
       # Se comprueba que el número sea distinto de 0 para salir inmediatamente de la ejecución del script y no mostrar nada más
-      if [[ $ELEMENTO_ARRAY != 0 ]]; then
+      if (( $ELEMENTO_ARRAY != 0 )); then
         # Se muestra un mensaje al usuario
         echo "" && echo -e "\e[34mEl elemento que está en la posición $ELEMENTO_ARRAY del array es:"
         
