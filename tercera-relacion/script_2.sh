@@ -14,14 +14,6 @@ export LISTADO_NIVELES=1
 #-----------------------------------------------------------------------------------------------------------------
 # Declaración de funciones
 
-# Función para indicar el funcionamiento del script
-function how_works_script() {
-  echo "Para hacer uso del script, debe pasar un único fichero como:" && echo ""
-  echo "./script_2.sh prueba.txt" && echo ""
-  echo "./script_2.sh /home/usuario/prueba.txt"
-}
-
-
 # Función que muestra un mensaje en el caso de no existir el fichero en la ruta
 function file_doesnt_exists() {
   # Se obtienen los niveles de la ruta dada por el usuario mediante argumento
@@ -52,11 +44,8 @@ function main() {
 
   # Comprobación de la cantidad de argumentos pasados
   if [[ $# != 1 ]]; then
-    # Se pone el texto en bold (negrita) mediante \e[1 y se concatena con color, 35m, mediante semicolon
-    echo -e "\e[1;91mNúmero de argumentos incorrecto"
-    
-    # Llamada a la función que explica cómo funciana el script
-    how_works_script
+    # Llamada a la función que explica cómo funciona el script
+    source how_works_script_1.sh
 
   # Entrada a esta condición cuando el número de argumentos sea 1
   else
