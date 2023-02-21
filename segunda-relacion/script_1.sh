@@ -109,7 +109,7 @@ function calculadora() {
 # Función principal para validar los argumentos dados
 function main() {
   # Llamada a la función para limpiar la pantalla
-  # source modules/clear_screen.sh
+  source modules/clear_screen.sh
 
   # En el caso de que los argumentos pasados coincidan con la cantidad de argumentos necesarios, procederá con la ejecución
   if (( $# == 3 )); then
