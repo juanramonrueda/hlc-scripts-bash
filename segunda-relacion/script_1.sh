@@ -27,6 +27,7 @@ export TERCER_ARGUMENTO="${3}"
 function suma() {
   RESULTADO=$( echo "(${PRIMER_ARGUMENTO} + ${SEGUNDO_ARGUMENTO})" | bc -l )
   echo "Se ha realizado la suma de ambos números --> ${PRIMER_ARGUMENTO} + ${SEGUNDO_ARGUMENTO} = ${RESULTADO}"
+  exit 0
 }
 
 
@@ -34,6 +35,7 @@ function suma() {
 function resta() {
   RESULTADO=$( echo "(${PRIMER_ARGUMENTO} - ${SEGUNDO_ARGUMENTO})" | bc -l )
   echo "Se ha realizado la resta de ambos números --> ${PRIMER_ARGUMENTO} - ${SEGUNDO_ARGUMENTO} = ${RESULTADO}"
+  exit 0
 }
 
 
@@ -41,6 +43,7 @@ function resta() {
 function multiplicacion() {
   RESULTADO=$( echo "(${PRIMER_ARGUMENTO} * ${SEGUNDO_ARGUMENTO})" | bc -l )
   echo "Se ha realizado la multiplicación de ambos números --> ${PRIMER_ARGUMENTO} * ${SEGUNDO_ARGUMENTO} = ${RESULTADO}"
+  exit 0
 }
 
 
@@ -48,6 +51,7 @@ function multiplicacion() {
 function division() {
   RESULTADO=$( echo "(${PRIMER_ARGUMENTO} / ${SEGUNDO_ARGUMENTO})" | bc -l )
   echo "Se ha realizado la división de ambos números para obtener el cociente --> ${PRIMER_ARGUMENTO} / ${SEGUNDO_ARGUMENTO} = ${RESULTADO}"
+  exit 0
 }
 
 
@@ -55,6 +59,7 @@ function division() {
 function modulo() {
   RESULTADO=$( echo "(${PRIMER_ARGUMENTO} % ${SEGUNDO_ARGUMENTO})" | bc -l )
   echo "Se ha realizado la división de ambos números para obtener el resto --> ${PRIMER_ARGUMENTO} % ${SEGUNDO_ARGUMENTO} = ${RESULTADO}"
+  exit 0
 }
 
 
