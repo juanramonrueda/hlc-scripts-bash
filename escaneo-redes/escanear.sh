@@ -32,41 +32,48 @@ function main() {
   # Llamada a la función para limpiar la pantalla
   source modules/clear_screen.sh
 
-  # Comprobación de que el directorio para los archivos exista
-  if [[ ! -d ${RUTA_DIRECTORIO_FICHEROS} ]]; then
-    mkdir ${RUTA_DIRECTORIO_FICHEROS}
-  fi
+  # Comprobación de la cantidad de argumentos pasados
+  if (( $# != 1 )); then
+    # Llamada al script que contiene la función ayuda
+    source modules/help.sh
 
-  # Obtención de la IP sin el último octeto
-  NO_ZERO_IP=$( echo "${NET_ADDRESS}" | cut -d "." -f 1,2,3 )
-
-  # Bucle para recorrer toda la red y hacer ping a las IPs
-  for CUARTO_OCTETO in $(seq 1 1 254)
-  do
-    # Progreso del escaneo, no se guarda en el archivo
-    echo "Pinging to ${NO_ZERO_IP}.${CUARTO_OCTETO}"
-    
-    # Ping a la IP que está en ese momento en el bucle y su salida se manda a NULL
-    ping -c 1 "${NO_ZERO_IP}.${CUARTO_OCTETO}" >/dev/null 2>&1
-
-    # Obtención del RC del comando para saber si ha sido exitoso el ping o no
-    RESULTADO=$( echo $? )
-
-    # Comparación del resultado del ping para saber si el host estaba UP or DOWN
-    if [[ ${RESULTADO} -eq 0 ]]; then
-      # Se usa DATE para saber la hora a la que se realiza el ping y se pasa por pipeline a TEE -A para añadir al fichero
-      echo "($(date +%H:%M:%S)) El host ${NO_ZERO_IP}.${CUARTO_OCTETO} está activo" | tee -a ${RUTA_COMPLETA_FICHERO}
-
-      # Incremento de la variable contadora para saber cuántos hosts están activos
-      let "CONTADOR_ACTIVOS++"
+  else
+    # Comprobación de que el directorio para los archivos exista
+    if [[ ! -d ${RUTA_DIRECTORIO_FICHEROS} ]]; then
+      mkdir ${RUTA_DIRECTORIO_FICHEROS}
     fi
-  done
 
-  # Mensaje de que el escaneo de la red ha finalizado
-  echo "Escaneo finalizado" && echo ""
+    # Obtención de la IP sin el último octeto
+    NO_ZERO_IP=$( echo "${NET_ADDRESS}" | cut -d "." -f 1,2,3 )
 
-  # Mensaje de cuántos hosts estaban activos al momento de realizar el escaneo de la red
-  echo "Se han encontrado ${CONTADOR_ACTIVOS} host activos"
+    # Bucle para recorrer toda la red y hacer ping a las IPs
+    for CUARTO_OCTETO in $(seq 1 1 254)
+    do
+      # Progreso del escaneo, no se guarda en el archivo
+      echo "Pinging to ${NO_ZERO_IP}.${CUARTO_OCTETO}"
+      
+      # Ping a la IP que está en ese momento en el bucle y su salida se manda a NULL
+      ping -c 1 "${NO_ZERO_IP}.${CUARTO_OCTETO}" >/dev/null 2>&1
+
+      # Obtención del RC del comando para saber si ha sido exitoso el ping o no
+      RESULTADO=$( echo $? )
+
+      # Comparación del resultado del ping para saber si el host estaba UP or DOWN
+      if [[ ${RESULTADO} -eq 0 ]]; then
+        # Se usa DATE para saber la hora a la que se realiza el ping y se pasa por pipeline a TEE -A para añadir al fichero
+        echo "($(date +%H:%M:%S)) El host ${NO_ZERO_IP}.${CUARTO_OCTETO} está activo" | tee -a ${RUTA_COMPLETA_FICHERO}
+
+        # Incremento de la variable contadora para saber cuántos hosts están activos
+        let "CONTADOR_ACTIVOS++"
+      fi
+    done
+
+    # Mensaje de que el escaneo de la red ha finalizado
+    echo "Escaneo finalizado" && echo ""
+
+    # Mensaje de cuántos hosts estaban activos al momento de realizar el escaneo de la red
+    echo "Se han encontrado ${CONTADOR_ACTIVOS} host activos"
+  fi
 }
 
 
