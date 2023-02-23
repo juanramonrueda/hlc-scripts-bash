@@ -17,7 +17,7 @@ export CAMPOS_CUT=1
 # Función principal
 function main() {
   # Llamada al script para realizar la limpieza de pantalla
-  source clear_screen.sh
+  source modules/clear_screen.sh
   
   # Mientras el número sea distinto de 99, el bucle continuará
   while (( ${X} != 99 )); do

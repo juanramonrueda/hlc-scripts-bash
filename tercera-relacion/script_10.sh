@@ -1,8 +1,16 @@
 #!/bin/bash
 
 
-#----------------------------------------------------------------------------------------
-# Declaración de función
+#-----------------------------------------------------------------------------------------------------------
+# Declaración de funciones
+
+# Función para indicar que hay un error
+function error() {
+  echo -e "\e[1;38;5;1mEl valor para la variable 'x' no es un número, introduzca únicamente números\e[0m"
+
+  exit 1
+}
+
 
 # Función para informar al usuario de la ecuación planteada
 function informacion_ecuacion() {
@@ -11,22 +19,32 @@ function informacion_ecuacion() {
   read -p "Introduzca el valor para la variable 'x': " X
 }
 
+
+# Función que calcula la ecuación
 function calcular_ecuacion() {
-  # Se calcula el exponente de x² mediante bc y se guarda en variable
-  EXPONENTE=$( echo "$X^2" | bc)
+  # Comprobación del contenido de la variable
+  if [[ ${X} =~ [[:digit:]] ]]; then
+    # Se calcula el exponente de x² mediante bc y se guarda en variable
+    EXPONENTE=$( echo "${X}^2" | bc)
 
-  # Se calcula la multiplicación del número "3" por el exponente guardado en variable
-  PRIMERA_MULTIPLICACION=$( echo "3 * $EXPONENTE" | bc)
+    # Se calcula la multiplicación del número "3" por el exponente guardado en variable
+    PRIMERA_MULTIPLICACION=$( echo "3 * ${EXPONENTE}" | bc)
 
-  # Se calcula la multipliación de "5" por el valor de "x"
-  SEGUNDA_MULTIPLICACION=$( echo "5 * $X" | bc )
-  
-  # Se calcula la suma de las operaciones realizadas y se guarda en variable
-  RESULTADO=$( echo "$PRIMERA_MULTIPLICACION + $SEGUNDA_MULTIPLICACION + 8" | bc)
-  
-  # Se muestra el resultado de la ecuación al usuario
-  echo -e "El resultado de la ecuación es: \e[1;38;5;105m$RESULTADO\e[0m"
+    # Se calcula la multipliación de "5" por el valor de "x"
+    SEGUNDA_MULTIPLICACION=$( echo "5 * ${X}" | bc )
+    
+    # Se calcula la suma de las operaciones realizadas y se guarda en variable
+    RESULTADO=$( echo "${PRIMERA_MULTIPLICACION} + ${SEGUNDA_MULTIPLICACION} + 8" | bc)
+    
+    # Se muestra el resultado de la ecuación al usuario
+    echo -e "El resultado de la ecuación es: \e[1;38;5;105m${RESULTADO}\e[0m"
+
+  else
+    # Llamada a la función que indica que hay un error en el valor de 'x'
+    error
+  fi
 }
+
 
 # Función principal
 function main() {
@@ -41,9 +59,9 @@ function main() {
 }
 
 
-#----------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------
 # Ejecución de la función principal
 
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-    main "$@"
+    main "${@}"
 fi

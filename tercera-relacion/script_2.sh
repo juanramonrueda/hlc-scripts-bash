@@ -45,7 +45,7 @@ function file_doesnt_exists() {
 # Función principal
 function main() {
   # Llamada al script de limpieza de pantalla
-  source clear_screen.sh
+  source modules/clear_screen.sh
 
   # Comprobación de la cantidad de argumentos pasados
   if (( $# != 1 )); then
@@ -53,7 +53,7 @@ function main() {
     ayuda
 
     # Llamada al script que explica cómo funciona el script
-    source how_works_script_1.sh
+    source modules/how_works_script_1.sh
 
   # Entrada a esta condición cuando el número de argumentos sea 1
   else
