@@ -34,6 +34,9 @@ RUTA_COMPLETA_FICHERO="${RUTA_DIRECTORIO_FICHEROS}/${NOMBRE_FICHERO}"
 
 # Función para obtener los hosts activos en la red designada por argumento
 function main() {
+  # Importación del script que contiene la función necesaria
+  source modules/help.sh
+
   # Comprobación de la cantidad de argumentos pasados
   if (( ${#} == 1 )); then
     # Comprobación del uso de la ayuda
@@ -80,14 +83,15 @@ function main() {
         # Mensaje de cuántos hosts estaban activos al momento de realizar el escaneo de la red
         echo "Se han encontrado ${CONTADOR_ACTIVOS} host activos"
       else
+        # Aviso y llamada a la función de ayuda con código de salida erróneo 
         echo "El argumento pasado no es una IP o no tiene el formato correcto"
-        source modules/help.sh
+        ayuda
         exit 1
       fi
     fi
   else
-    # Llamada al script que hace de ayuda
-    source modules/help.sh
+    # Llamada a la función que hace de ayuda
+    ayuda
 
     # Salida con código de error en el caso de que el argumento no sea correcto
     exit 1
