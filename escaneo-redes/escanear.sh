@@ -42,7 +42,7 @@ function main() {
     # Comprobación del uso de la ayuda
     if [[ ${FIRST_ARG} == "-h" || ${FIRST_ARG} == "--help" ]]; then
       # Llamada al script que contiene la función ayuda
-      source modules/help.sh
+      ayuda
 
     else
       # Comprobación del formato del argumento recibido
