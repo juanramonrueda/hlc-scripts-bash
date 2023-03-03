@@ -107,11 +107,12 @@ function main() {
 
   if (( ${#} == 1 )); then
     if [[ ${PRIMER_ARGUMENTO} == "-h" || ${PRIMER_ARGUMENTO} == "--help" ]]; then
+      # Llamada a la función que muestra la ayuda del script help.sh
       ayuda
+      
     else
-      # Muestra un mensaje de equivocación en cuanto al argumento pasado y sale con código de error
-      echo -e "\e[38;5;196mSe ha equivocado con los argumentos, para mostrar la ayuda es ${0} -h ó ${0} --help\e[0m"
-      exit 1
+      # Llamada a la función que muestra el error en cuanto a la petición de ayuda 
+      error_ayuda
     fi
 
   # En el caso de que los argumentos pasados coincidan con la cantidad de argumentos necesarios, procederá con la ejecución

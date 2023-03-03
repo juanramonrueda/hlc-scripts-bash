@@ -19,11 +19,20 @@ RUTA_ARCHIVO="${OPCN_USUARIO}/${SEGUNDA_VARIABLE}"
 
 # Función principal
 function main() {
-  if (( $# != 2 )); then
-    # Llamada al script que tiene la función de ayuda
-    source modules/how_works_script_2.sh
+  # Importación de módulos para este script
+  source modules/script_3/help.sh
 
-  else
+  if (( ${#} == 1 )); then
+    if [[ ${1} == "-h" || ${1} == "--help" ]]; then
+      # Llamada a la función que muestra la ayuda del script help.sh
+      ayuda
+      
+    else
+      # Llamada a la función que muestra el error en cuanto a la petición de ayuda 
+      error_ayuda
+    fi
+
+  elif (( ${#} == 2 )); then
     # Comprobación de que la primera variable (primer argumento) dado existe
     if test -d ${OPCN_USUARIO}; then
       # Comprobación de que la concatenación de la ruta del archivo es un fichero
@@ -33,14 +42,7 @@ function main() {
 
         # Comprobación para saber si el usuario quiere ver el contenido del fichero
         if [[ ${VER_CONTENIDO} == "S" || ${VER_CONTENIDO} == "s" ]]; then
-          echo "" && cat ${RUTA_ARCHIVO} && echo ""
-
-          # Se genera un código correcto de la ejecución del script
-          exit 0
-
-        else
-          # Se genera un código correcto de la ejecución del script
-          exit 0
+          echo "" && cat ${RUTA_ARCHIVO}
         fi
       
       # En caso de se otro tipo de archivo, como un directorio, mostrará un mensaje
@@ -52,6 +54,9 @@ function main() {
     else
       echo "El primer argumento, ${OPCN_USUARIO} no es un directorio o tiene un error"
     fi
+
+  else
+    
   fi
 }
 

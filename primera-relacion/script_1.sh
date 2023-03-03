@@ -359,9 +359,9 @@ function main() {
       # Llamada a la función que muestra la ayuda del script help.sh
       ayuda
     else
-      # Se muestra un error y se sale con el código de error
-      echo -e "\e[1;38;5;196mSe ha equivocado de argumento, es ${0} -h ó ${0} --help\e[0m"
-      exit 1
+    
+      # Llamada a la función que muestra el error en cuanto a la petición de ayuda 
+      error_ayuda
     fi
   fi
   
