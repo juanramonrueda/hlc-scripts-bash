@@ -23,7 +23,9 @@ SUMA_TOTAL=0
 # Función para cuando se pase un único argumento
 function un_argumento() {
   if [[ ${FIRST_ARG} == "-h" || ${FIRST_ARG} == "--help" ]]; then
-    source modules/help.sh  
+    # Llamada a la función ayuda
+    ayuda
+
   else
     # Se obtienen en "array" los usuarios que hay en el sistema
     USUARIOS_SISTEMA=$( cat /etc/passwd | awk -F ":" '($3 >= 1000 && $3 < 65534) {print $1}' )
@@ -86,14 +88,20 @@ function dos_argumentos() {
 
 
 function main() {
+  # Importación del script que contiene la función de ayuda
+  source modules/help.sh
+
   if (( ${#} == 1 )); then
+    # Llamada a la función para todos los usuarios y el fichero de salida
     un_argumento
 
   elif (( ${#} == 2 )); then
+    # Llamada a la función para el usuario y el fichero de salida
     dos_argumentos
 
    else
-    source modules/help.sh
+    # Llamada a la función ayuda
+    ayuda
 
     # Se sale con código de error erróneo al no especificar argumentos
     exit 1
