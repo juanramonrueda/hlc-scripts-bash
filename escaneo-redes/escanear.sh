@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-#---------------------------------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------------------------------------------------------
 # Declararación de variables
 
 # Conversión del primer argumento recibido a variable y se cambia el scope a "global"
@@ -29,7 +29,7 @@ RUTA_DIRECTORIO_FICHEROS="${RUTA_DIRECTORIO_USUARIO}/${DIRECTORIO_ESCANEO}"
 RUTA_COMPLETA_FICHERO="${RUTA_DIRECTORIO_FICHEROS}/${NOMBRE_FICHERO}"
 
 
-#---------------------------------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------------------------------------------------------
 # Declaración de función
 
 # Función para obtener los hosts activos en la red designada por argumento
@@ -70,7 +70,7 @@ function main() {
           # Comparación del resultado del ping para saber si el host estaba UP or DOWN
           if (( ${RESULTADO} == 0 )); then
             # Se usa DATE para saber la hora a la que se realiza el ping y se pasa por pipeline a TEE -A para añadir al fichero
-            echo "($(date "+%F %H:%M:%S")) El host ${NO_ZERO_IP}.${CUARTO_OCTETO} está activo" | tee -a ${RUTA_COMPLETA_FICHERO}
+            echo -e "\e[38;5;155m($(date "+%F %H:%M:%S")) El host ${NO_ZERO_IP}.${CUARTO_OCTETO} está activo\0[0m" | tee -a ${RUTA_COMPLETA_FICHERO}
 
             # Incremento de la variable contadora para saber cuántos hosts están activos
             let "CONTADOR_ACTIVOS++"
@@ -79,9 +79,9 @@ function main() {
 
         # Mensaje de que el escaneo de la red ha finalizado
         echo "Escaneo finalizado" && echo ""
-
         # Mensaje de cuántos hosts estaban activos al momento de realizar el escaneo de la red
         echo "Se han encontrado ${CONTADOR_ACTIVOS} host activos"
+        
       else
         # Aviso y llamada a la función de ayuda con código de salida erróneo 
         echo "El argumento pasado no es una IP o no tiene el formato correcto"
@@ -89,17 +89,17 @@ function main() {
         exit 1
       fi
     fi
+
   else
     # Llamada a la función que hace de ayuda
     ayuda
-
     # Salida con código de error en el caso de que el argumento no sea correcto
     exit 1
   fi
 }
 
 
-#---------------------------------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------------------------------------------------------
 # Ejecución de la función principal
 
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
