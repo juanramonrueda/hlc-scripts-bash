@@ -7,26 +7,12 @@
 # Declaración de la variable a string para entrar en el bucle de la función principal
 OPCN_USUARIO=1
 
+# Variable contadora para mostrar la primera vez el avido de sudo
+CONTADOR=0
+
 
 #--------------------------------------------------------------------------------------------------------------------------------
 # Declaración de funciones
-
-# Función para mostrar el menú de opciones disponibles al usuario
-function mostrar_menu() {
-  echo "Opciones:"
-  echo ""
-  echo "      1.- Dar permiso de ejecución a todos los archivos de un directorio"
-  echo ""
-  echo "      2.- Quitar permiso de ejecución a todos los archivos de un directorio"
-  echo ""
-  echo "      3.- Hacer copia de seguridad del directorio de trabajo de un usuario"
-  echo ""
-  echo "      4.- Obtener en un archivo los 20 inicios de sesión más recientes"
-  echo ""
-  echo "      0.- Salir"
-  echo ""
-}
-
 
 # Función para dar permisos de ejecución a un directorio
 function dar_ejecucion_archivos() {
@@ -144,37 +130,59 @@ function log_inicios_sesion() {
 
 # Función principal
 function main() {
+  # Importación de los scripts para el funcionamiento de este script
+  source modules/script_2/clear_screen.sh
+  source modules/script_2/help.sh
+  source modules/script_2/menu.sh
+
+  # Comprobación de si hay argumento
+  if (( ${#} == 1 )); then
+    if [[ ${1} == "-h" || ${1} == "--help" ]]; then
+      # Llamada a la función que muestra la ayuda del script help.sh
+      ayuda
+    else
+      # Se muestra un error y se sale con el código de error
+      echo -e "\e[1;38;5;196mSe ha equivocado de argumento, es ${0} -h ó ${0} --help\e[0m"
+      exit 1
+    fi
+  fi
+
   while (( ${OPCN_USUARIO} != 0 )); do
     # Llamada a la función para limpiar la pantalla
-    limpiar_pantalla
+    clear_screen
+
+    if (( ${CONTADOR} <= 0 )); then
+      # Llamada a la función que avisa del uso de sudo al usuario del script menu.sh
+      aviso_sudo
+    fi
 
     # Llamada a la función para mostrar el menú de opciones
-    mostrar_menu
+    menu_opciones
 
     # Petición y registro de una opción pedida al usuario
-    read -n 1 -p "Introduzca la opción que quiera usar: " OPCN_USUARIO
+    read -n 1 -p "Introduzca la opción que quiera usar: " OPCN_USUARIO && echo ""
 
     # Comparación de la opción dada por el usuario
     case ${OPCN_USUARIO} in
-      1) echo "" && dar_ejecucion_archivos;;
-      2) echo "" && quitar_ejecucion_archivos;;
-      3) echo "" && copia_seguridad_usuario;;
-      4) echo "" && log_inicios_sesion;;
-      0) echo "" && echo "Ejecución finalizada";;
-      *) echo "" && echo "Se ha equivocado de número";;
+      1) dar_ejecucion_archivos;;
+      2) quitar_ejecucion_archivos;;
+      3) copia_seguridad_usuario;;
+      4) log_inicios_sesion;;
+      0) echo "Ejecución finalizada";;
+      *) echo "Se ha equivocado de número";;
     esac
 
     # En el caso de que la opción del usuario sea distinta de "0", realizará una pequeña pausa
     # y pedirá una pulsación de tecla
     if (( ${OPCN_USUARIO} != 0 )); then
-      sleep 2s
+      sleep 1s
 
       echo ""
       read -n 1 -p "Pulse una tecla para continuar..."
     fi
-  done
 
-  exit 0
+    CONTADOR=$(( ${CONTADOR} + 1 ))
+  done
 }
 
 #--------------------------------------------------------------------------------------------------------------------------------
