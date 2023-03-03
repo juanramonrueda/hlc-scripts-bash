@@ -4,8 +4,10 @@
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------
 # Declaración de variables
 
+# Se convierte el primer argumento a "global" y se cambia el nombre
 export FIRST_ARG=${1}
 
+# Se convierte el segundo argumento a "global" y se cambia el nombre
 export SECOND_ARG=${2}
 
 # Inicialización de variable contadora a 0 para mostrar 
