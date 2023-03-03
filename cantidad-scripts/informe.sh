@@ -93,6 +93,7 @@ function main() {
    else
     source modules/help.sh
 
+    # Se sale con código de error erróneo al no especificar argumentos
     exit 1
   fi
 }
