@@ -35,7 +35,7 @@ RUTA_COMPLETA_FICHERO="${RUTA_DIRECTORIO_FICHEROS}/${NOMBRE_FICHERO}"
 # Función para obtener los hosts activos en la red designada por argumento
 function main() {
   # Importación del script que contiene la función necesaria
-  source modules/help.sh
+  source modules/escanear/help.sh
 
   # Comprobación de la cantidad de argumentos pasados
   if (( ${#} == 1 )); then
