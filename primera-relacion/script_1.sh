@@ -7,33 +7,12 @@
 # Variable para entrar en el bucle de la función principal
 OPCN_USUARIO=1
 
+# Variable contadora para mostrar la primera vez el avido de sudo
+CONTADOR=0
+
 
 #-------------------------------------------------------------------------------------------------------------------------------------------
 # Definición de funciones
-
-# Limpieza de pantalla
-function limpiar_pantalla(){
-  clear
-}
-
-# Se muestra el menú con las opciones disponibles
-function mostrar_menu() {
-  echo "Este script necesita permisos de sudo para que algunas funcionalidades se ejecuten correctamente"
-
-  echo "Opciones:"
-
-  # Se tabulan para el formateo de salida
-  echo "      1.- Crear usuario"
-  echo "      2.- Habilitar usuario"
-  echo "      3.- Deshabilitar usuario"
-  echo "      4.- Cambiar permisos a un fichero"
-  echo "      5.- Copia de seguridad del directorio de trabajo de un usuario determinado"
-  echo "      6.- Usuarios conectados actualmente"
-  echo "      7.- Espacio libre en disco"
-  echo "      8.- Trazar ruta"
-  echo "      9.- Salir"
-}
-
 
 # Creación de usuario
 function crear_usuario(){
@@ -342,7 +321,7 @@ function trazado_ruta(){
     # En el caso de que traceroute esté instalado, procederá con la pregunta sobre la IP o URL
     if [[ ${COMPROBACION_TRACEROUTE} == "traceroute" ]]; then
       # Petición de la IP o URL
-      echo "" && read -p "Introduzca la IP o URL a la que quiere hacer el trazado " IP_URL
+      echo "" && read -p "Introduzca la IP o URL a la que quiere hacer el trazado: " IP_URL
 
       # Trazado de la IP o URL pedida
       traceroute ${IP_URL}
@@ -358,7 +337,7 @@ function trazado_ruta(){
       echo "" && apt update && apt install traceroute -y
 
       # Petición de la IP o URL a la que hacer el trazado
-      echo "" && read -p "Introduzca la IP o URL a la que quiere hacer el trazado " IP_URL
+      echo "" && read -p "Introduzca la IP o URL a la que quiere hacer el trazado: " IP_URL
 
       # Trazado de la IP o URL pedida
       echo "" && traceroute ${IP_URL}
@@ -369,12 +348,34 @@ function trazado_ruta(){
 
 # Declaración de la función principal
 function main() {
+  # Importación de los scripts que contienen funciones a usar
+  source modules/clear_screen.sh
+  source modules/help.sh
+  source modules/menu.sh
+  
+  # Comprobación de si hay argumento
+  if (( ${#} == 1 )); then
+    if [[ ${1} == "-h" || ${1} == "--help" ]]; then
+      # Llamada a la función que muestra la ayuda del script help.sh
+      ayuda
+    else
+      # Se muestra un error y se sale con el código de error
+      echo -e "\e[1;38;5;196mSe ha equivocado de argumento, es ${0} -h ó ${0} --help\e[0m"
+      exit 1
+    fi
+  fi
+  
   while [[ ${OPCN_USUARIO} != "9" ]]; do
-    # Llamada a la función para limpiar la pantalla
-    limpiar_pantalla
+    # Llamada a la función que limpia la pantalla del script clear_screen.sh
+    clear_screen
 
-    # Llamada a la función para mostrar el menú de opciones al usuario
-    mostrar_menu
+    if (( ${CONTADOR} <= 0 )); then
+      # Llamada a la función que avisa del uso de sudo al usuario del script menu.sh
+      aviso_sudo
+    fi
+
+    # Se llama a la función que contiene las opciones disponibles del script menu.sh
+    opciones_disponibles  
 
     # Petición de una opción al usuario
     echo "" && read -n 1 -p "Seleccione una opción: " OPCN_USUARIO && echo ""
@@ -395,14 +396,16 @@ function main() {
 
     # En el caso de que la entrada de la opción sea distinta de "9", hará una pequeña espera y pedirá una pulsación de tecla
     if [[ ${OPCN_USUARIO} != "9" ]]; then
-      sleep 2s
+      sleep 1s
 
-      echo "" && read -n 1 -p "Pulse una tecla para continuar..."
+      echo "" && read -n 1 -p "Pulse la tecla Intro para continuar..."
     fi
+
+    CONTADOR=$(( ${CONTADOR} + 1 ))
   done
 
   # Código del estado de ejecución del script en cuanto termina correctamente
-  exit 1
+  exit 0
 }
 
 
