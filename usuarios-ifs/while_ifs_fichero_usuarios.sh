@@ -88,11 +88,21 @@ function generate_output_file_content() {
 
 # Función principal
 function main() {
-  # Llamada a la función "limpiar_pantalla"
-  source modules/clear_screen.sh
-
+  # Importación del módulo para la ayuda del script
+  source modules/help.sh
+  
   # Comprobación de la cantidad de argumentos pasados al script
-  if (( ${#} == 2 )); then
+  if (( ${#} == 1 )); then
+    if [[ ${1} == "-h" || ${1} == "--help" ]]; then
+      # Llamada a la función que muestra la ayuda del script help.sh
+      ayuda
+    
+    else
+      # Llamada a la función que muestra el error en cuanto a la petición de ayuda
+      error_ayuda
+    fi
+
+  elif (( ${#} == 2 )); then
 
     # Comprobación de que el fichero de entrada existe
     if test -e ${INPUT_FILE}; then
@@ -120,14 +130,15 @@ function main() {
     # En el caso de que el fichero de entrada no exista, saldrá de la ejecución del script
     else
       echo "El fichero de entrada ${INPUT_FILE} no existe"
-      source modules/help.sh
+      exit 1
     fi
 
   # En el caso de que se hayan pasado una cantidad distinta a dos argumentos, mostrará los mensajes
   else
     # Muestra la cantidad de argumentos que se han pasado al script
-    echo "Ha introducido ${#} argumentos al script cuando solo se pueden pasar dos" && echo ""
-    source modules/help.sh
+    echo -e "\e[38;5;196mHa introducido una cantidad incorrecta de argumentos al script" && echo ""
+    ayuda
+    exit 1
   fi
 }
 
