@@ -26,7 +26,7 @@ export TERCER_ARGUMENTO="${3}"
 # Función para realizar la suma de los dos argumentos
 function suma() {
   RESULTADO=$( echo "(${PRIMER_ARGUMENTO} + ${SEGUNDO_ARGUMENTO})" | bc -l )
-  echo "Se ha realizado la suma de ambos números --> ${PRIMER_ARGUMENTO} + ${SEGUNDO_ARGUMENTO} = ${RESULTADO}"
+  echo -e "\e[38;5;154mSe ha realizado la suma de ambos números --> \e[1m${PRIMER_ARGUMENTO} + ${SEGUNDO_ARGUMENTO} = ${RESULTADO}\e[0m"
   exit 0
 }
 
@@ -34,7 +34,7 @@ function suma() {
 # Función para realizar la resta de los dos argumentos
 function resta() {
   RESULTADO=$( echo "(${PRIMER_ARGUMENTO} - ${SEGUNDO_ARGUMENTO})" | bc -l )
-  echo "Se ha realizado la resta de ambos números --> ${PRIMER_ARGUMENTO} - ${SEGUNDO_ARGUMENTO} = ${RESULTADO}"
+  echo -e "\e[38;5;154mSe ha realizado la resta de ambos números --> \e[1m${PRIMER_ARGUMENTO} - ${SEGUNDO_ARGUMENTO} = ${RESULTADO}\e[0m"
   exit 0
 }
 
@@ -42,7 +42,7 @@ function resta() {
 # Función para realizar la multiplicación de los dos argumentos
 function multiplicacion() {
   RESULTADO=$( echo "(${PRIMER_ARGUMENTO} * ${SEGUNDO_ARGUMENTO})" | bc -l )
-  echo "Se ha realizado la multiplicación de ambos números --> ${PRIMER_ARGUMENTO} * ${SEGUNDO_ARGUMENTO} = ${RESULTADO}"
+  echo -e "\e[38;5;154mSe ha realizado la multiplicación de ambos números --> \e[1m${PRIMER_ARGUMENTO} * ${SEGUNDO_ARGUMENTO} = ${RESULTADO}\e[0m"
   exit 0
 }
 
@@ -50,7 +50,7 @@ function multiplicacion() {
 # Función para realizar la división de los dos argumentos y obtener el cociente
 function division() {
   RESULTADO=$( echo "(${PRIMER_ARGUMENTO} / ${SEGUNDO_ARGUMENTO})" | bc -l )
-  echo "Se ha realizado la división de ambos números para obtener el cociente --> ${PRIMER_ARGUMENTO} / ${SEGUNDO_ARGUMENTO} = ${RESULTADO}"
+  echo -e "\e[38;5;154mSe ha realizado la división de ambos números para obtener el cociente --> \e[1m${PRIMER_ARGUMENTO} / ${SEGUNDO_ARGUMENTO} = ${RESULTADO}\e[0m"
   exit 0
 }
 
@@ -58,19 +58,8 @@ function division() {
 # Función para realizar la división de los dos argumentos y obtener el resto
 function modulo() {
   RESULTADO=$( echo "(${PRIMER_ARGUMENTO} % ${SEGUNDO_ARGUMENTO})" | bc -l )
-  echo "Se ha realizado la división de ambos números para obtener el resto --> ${PRIMER_ARGUMENTO} % ${SEGUNDO_ARGUMENTO} = ${RESULTADO}"
+  echo -e "\e[38;5;154mSe ha realizado la división de ambos números para obtener el resto --> \e[1m${PRIMER_ARGUMENTO} % ${SEGUNDO_ARGUMENTO} = ${RESULTADO}\e[0m"
   exit 0
-}
-
-
-function error_division() {
-  echo "Si desea realizar la división de ${PRIMER_ARGUMENTO} entre ${SEGUNDO_ARGUMENTO}, el ${SEGUNDO_ARGUMENTO} tiene que ser distinto de 0"
-  echo ""
-  sleep 2s
-  echo "Finalizando la ejecución..."
-
-  # Salida con el código 1 para indicar que ha habido un error
-  exit 1
 }
 
 
@@ -90,7 +79,7 @@ function calculadora() {
 
   # En el caso de que el tercer argumento sea para realizar la división y obtener el cociente, llamará a la función que realiza la operación
   elif [[ ${TERCER_ARGUMENTO} == '/' ]]; then
-    if [[ ${SEGUNDO_ARGUMENTO} != '0' ]];then
+    if (( ${SEGUNDO_ARGUMENTO} != 0 ));then
       division
 
     # En el caso de que el tercer argumento sea la división y el segundo argumento un 0, saldrá de la ejecución
@@ -100,7 +89,7 @@ function calculadora() {
 
   # En el caso de que el tercer argumento sea para realizar la división y obtener el resto, llamará a la función que realiza la operación
   elif [[ ${TERCER_ARGUMENTO} == '%' ]]; then
-    if [[ ${SEGUNDO_ARGUMENTO} != '0' ]];then
+    if (( ${SEGUNDO_ARGUMENTO} != 0 ));then
       modulo
 
     # En el caso de que el tercer argumento sea la división y el segundo argumento un 0, saldrá de la ejecución
@@ -113,11 +102,20 @@ function calculadora() {
 
 # Función principal para validar los argumentos dados
 function main() {
-  # Llamada a la función para limpiar la pantalla
-  source modules/clear_screen.sh
+  # Importación de scripts necesarios 
+  source modules/script_1/help.sh
+
+  if (( ${#} == 1 )); then
+    if [[ ${PRIMER_ARGUMENTO} == "-h" || ${PRIMER_ARGUMENTO} == "--help" ]]; then
+      ayuda
+    else
+      # Muestra un mensaje de equivocación en cuanto al argumento pasado y sale con código de error
+      echo -e "\e[38;5;196mSe ha equivocado con los argumentos, para mostrar la ayuda es ${0} -h ó ${0} --help\e[0m"
+      exit 1
+    fi
 
   # En el caso de que los argumentos pasados coincidan con la cantidad de argumentos necesarios, procederá con la ejecución
-  if (( $# == 3 )); then
+  elif (( ${#} == 3 )); then
 
     # Comprobación de que el primer argumento dado es un número
     if [[ ${PRIMER_ARGUMENTO} =~ ${COMPROBACION_NUMERO} ]]; then
@@ -132,21 +130,22 @@ function main() {
         # Mensaje de que el tercer argumento dado no es un símbolo de expresión matemática
         else
           # Uso del backslash para "escapar" las comillas dobles
-          echo "El tercer argumento dado, \"${TERCER_ARGUMENTO}\", no es una expresión matemática"
+          echo -e "\e[38;5;196mEl tercer argumento dado, \"${TERCER_ARGUMENTO}\", no es una expresión matemática\e[0m"
         fi
     
       # Mensaje de que el segundo argumento dado no es un número    
       else
-        echo "El segundo argumento dado, \"${SEGUNDO_ARGUMENTO}\", no es un número"
+        echo -e "\e[38;5;196mEl segundo argumento dado, \"${SEGUNDO_ARGUMENTO}\", no es un número\e[0m"
       fi
 
     # Mensaje de que el primer argumento dado no es un número
     else
-      echo "El primer argumento dado, \"${PRIMER_ARGUMENTO}\", no es un número"
+      echo -e "\e[38;5;196mEl primer argumento dado, \"${PRIMER_ARGUMENTO}\", no es un número\e[0m"
     fi
 
     else
-      source modules/how_works_script_3.sh
+      # En caso de no pasar ningún argumento, mostrará la ayuda y saldrá con un código erróneo
+      no_arg
   fi
 }
 
