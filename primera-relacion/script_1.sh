@@ -403,9 +403,6 @@ function main() {
 
     CONTADOR=$(( ${CONTADOR} + 1 ))
   done
-
-  # Código del estado de ejecución del script en cuanto termina correctamente
-  exit 0
 }
 
 
