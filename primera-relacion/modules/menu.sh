@@ -2,14 +2,7 @@
 
 
 #---------------------------------------------------------------------------------------------------------------------------------------
-# Declaración de funciones
-
-# Se muestra un aviso para el usuario
-function aviso_sudo() {
-  echo -e "\e[1;38;5;196mEste script puede necesitar permisos de sudo para que algunas funcionalidades se ejecuten correctamente\e[0m"
-  echo ""
-}
-
+# Declaración de función
 
 # Se muestra el menú con las opciones disponibles
 function opciones_disponibles() {
