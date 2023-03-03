@@ -47,16 +47,18 @@ function main() {
       
       # En caso de se otro tipo de archivo, como un directorio, mostrará un mensaje
       else
-        echo "El segundo argumento, ${SEGUNDA_VARIABLE} no es un fichero" && echo ""
+        echo "El segundo argumento, ${SEGUNDA_VARIABLE} no es un fichero"
+        exit 1
       fi
     
     # Mensaje para indicar que el primer argumento tiene un error o es un fichero
     else
       echo "El primer argumento, ${OPCN_USUARIO} no es un directorio o tiene un error"
+      exit 1
     fi
 
   else
-    
+    no_arg
   fi
 }
 
