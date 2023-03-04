@@ -14,11 +14,6 @@ export LISTADO_NIVELES=1
 #------------------------------------------------------------------------------------------------------------------------------------
 # Declaración de funciones
 
-# Función que explica el funcionamiento del script
-function ayuda(){
-  echo -e "\e[38;5;27mEste script lee los ficheros y muestra su contenido, la cantidad de líneas, palabras y letras que tiene\e[0m"
-}
-
 # Función que muestra un mensaje en el caso de no existir el fichero en la ruta
 function file_doesnt_exists() {
   # Se obtienen los niveles de la ruta dada por el usuario mediante argumento
