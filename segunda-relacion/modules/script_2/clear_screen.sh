@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-#----------------------
+#---------------------------------------
 # Declaración de función
 
 # Función para la limpieza de pantalla
