@@ -18,5 +18,4 @@ function error_arg() {
   echo -e "Debe pasar un único argumento:\e[0m"
   echo -e "\e[38;5;129m${0} <correo_electrónico>\e[0m"
   echo "" && echo -e "\e[38;5;162mPuede visualizar la ayuda con ${0} -h ó ${0} --help\e[0m"
-
 }

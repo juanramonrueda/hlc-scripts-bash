@@ -15,7 +15,7 @@ function ayuda() {
 # Función para indicar que hay un fallo en el argumento para la ayuda
 function error_ayuda() {
   # Se muestra un error y se sale con el código de error
-  echo -e "\e[38;5;196mSe ha equivocado con el argumento"
+  echo -e "\e[38;5;196mSe ha equivocado con el argumento para la petición de ayuda"
   echo -e "\e[1m${0} -h"
   echo -e "${0} --help\e[0m"
   exit 1
