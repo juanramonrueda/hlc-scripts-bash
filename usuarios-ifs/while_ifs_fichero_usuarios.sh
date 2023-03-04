@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-#-------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------------------------------
 # Declaración de variables
 
 # Declaración de variable para agregar una cabecera al fichero de salida
@@ -20,14 +20,14 @@ INTERMEDIATE_FILE="${RUTA_DIRECTORIO_USUARIO}/intermedio.txt"
 OUTPUT_FILE="${2}"
 
 
-#-------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------------------------------
 # Declaración de funciones
 
 # Función para comprobar el contenido del archivo de salida y realizar el traspaso de información
 # del archivo de entrada al fichero de salida sin sobreescribir y sin duplicar, triplicar...
 function generate_output_file_content() {
-  # Uso de un archivo intermedio para omitir la cabecera
-  tail -n +2 ${INPUT_FILE} >> ${INTERMEDIATE_FILE}
+  # Uso de un archivo intermedio para omitir la cabecera mediante -n y + para indicar que empiece desde esa línea
+  tail -n +2 $INPUT_FILE >> ${INTERMEDIATE_FILE}
 
   # Con read -r se lee línea a línea el archivo de entrada y se guarda en REGISTROS_FICHERO
   while IFS= read -r REGISTROS_FICHERO
@@ -60,16 +60,16 @@ function generate_output_file_content() {
     # Obtención del registro que hay que pasar al fichero de salida
     REGISTRO_FINAL_ENTRADA="${NOMBRE_REGISTRO} ${APELLIDO_REGISTRO};${NOMBRE_USUARIO}"
 
-    REGISTROS_SALIDA=$( cat ${OUTPUT_FILE} | grep "${OUTPUT_REGISTRO_FINAL_ENTRADAFILE}" )
+    REGISTROS_SALIDA=$( cat ${OUTPUT_FILE} | grep "${REGISTRO_FINAL_ENTRADA}" )
 
     # Comprobación de que el registro que se ha obtenido no está en el fichero de salida
-    if [[ "${OUTPUT_REGISTRO_FINAL_ENTRADAFILE}" != "${REGISTROS_SALIDA}" ]]; then
-      echo "Introduciendo ${OUTPUT_REGISTRO_FINAL_ENTRADAFILE} al fichero de salida..."
-      echo ${OUTPUT_REGISTRO_FINAL_ENTRADAFILE} >> ${OUTPUT_FILE}
+    if [[ "${REGISTRO_FINAL_ENTRADA}" != "$REGISTROS_SALIDA" ]]; then
+      echo "Introduciendo ${REGISTRO_FINAL_ENTRADA} al fichero de salida..."
+      echo ${REGISTRO_FINAL_ENTRADA} >> ${OUTPUT_FILE}
 
     # En el caso de que el registro esté repetido, no se volverá a introducir
     else
-      echo "El registro ${OUTPUT_REGISTRO_FINAL_ENTRADAFILE} está repetido y no se introducirá"
+      echo "El registro ${REGISTRO_FINAL_ENTRADA} está repetido y no se introducirá"
     fi
 
   # Con done < ${INTERMEDIATE_FILE} se lee el archivo intermedio para el bucle
@@ -86,7 +86,7 @@ function generate_output_file_content() {
 }
 
 
-# Función que contiene el flujo normal del programa
+# Función que contiene el flujo normal del programa 
 function normal_execution() {
   # Comprobación de que el fichero de entrada existe
   if test -f ${INPUT_FILE}; then
@@ -146,7 +146,7 @@ function main() {
 }
 
 
-#-------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------------------------------
 # Ejecución del script
 
 # Con BASH_SOURCE[0] se obtiene la ruta de la ejecución del script que en el caso de coincidir
