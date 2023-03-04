@@ -30,28 +30,44 @@ function ayuda(){
 
 # Función principal
 function main() {
-  # Llamada al script para limpiar la pantalla
-  source modules/clear_screen.sh
+  # Importación de módulos necesarios para el script
+  source modules/script_3/help.sh
 
-  if (( $# != 3 )); then
-    # Llamada a la función que explica la función del script
-    ayuda
-    
-    # Llamada a la función que explica cómo funciana el script
-    source modules/how_works_script_3.sh
+  # Comprobación del uso de la ayuda del script
+  if (( ${#} == 1)); then
+    if [[ ${1} == "-h" || ${1} == "--help" ]]; then
+      # Llamada a la función de ayuda
+      ayuda
+
+    else
+      # Llamada a la función que indica que hay un error en la petición de ayuda
+      error_ayuda
+    fi
+
+  elif (( ${#} == 3 )); then
+    if test -f ${FICHERO_1}; then
+      if test -f ${FICHERO_2}; then
+        # Se pasa el contenido del fichero a otro junto con las líneas numeradas
+        awk '{print NR, $0}' ${FICHERO_1} > ${FICHERO_1_1}
+
+        # Se pasa el contenido del fichero a otro junto con las líneas numeradas
+        awk '{print NR, $0}' ${FICHERO_2} > ${FICHERO_2_1}
+
+        # Se realiza la comprobación de las diferencias de los ficheros en el tercer fichero
+        diff --suppress-common-lines ${FICHERO_1_1} ${FICHERO_2_1} | tee -a ${FICHERO_COMPARACION}
+
+        # Borrado de los archivos intermedios para la numeración de las líneas
+        rm ${FICHERO_1_1} && rm ${FICHERO_2_1}
+      else
+        echo -e "\e[38;5;196mEl segundo argumento no es un fichero o tiene un error\e[0m"
+      fi
+    else
+      echo -e "\e[38;5;196mEl primer argumento no es un fichero o tiene un error\e[0m"
+    fi
 
   else
-    # Se pasa el contenido del fichero a otro junto con las líneas numeradas
-    awk '{print NR, $0}' ${FICHERO_1} > ${FICHERO_1_1}
-
-    # Se pasa el contenido del fichero a otro junto con las líneas numeradas
-    awk '{print NR, $0}' ${FICHERO_2} > ${FICHERO_2_1}
-
-    # Se realiza la comprobación de las diferencias de los ficheros en el tercer fichero
-    diff --suppress-common-lines ${FICHERO_1_1} ${FICHERO_2_1} | tee -a ${FICHERO_COMPARACION}
-
-    # Borrado de los archivos intermedios para la numeración de las líneas
-    rm ${FICHERO_1_1} && rm ${FICHERO_2_1}
+    # Llamada a la función que indica que no se han pasado correctamente los argumentos
+    wrong_args
   fi
 }
 
@@ -60,5 +76,5 @@ function main() {
 # Ejecución de la función principal
 
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-    main "${@}"
+  main "${@}"
 fi
