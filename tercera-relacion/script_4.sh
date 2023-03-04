@@ -36,8 +36,8 @@ function main() {
       ls_csv
     fi
   
-  # En el caso de que el número de argumentos no sea correcto, entra al ELSE
   else
+    # Llamada a la función que indica que no se han pasado argumentos al script
     no_arg
   fi
 }

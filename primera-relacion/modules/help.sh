@@ -6,8 +6,16 @@
 
 # Función para mostrar la ayuda del script
 function ayuda() {
-  echo -e "\e[38;5;162mEste script tiene varias funciones disponibles al ejecutarlo sin argumentos\e[0m" && echo ""
+  echo -e "\e[38;5;162mEste script tiene varias funciones disponibles al ejecutarlo, no necesita argumentos" 
+  echo ""
+  
+  # Se muestran las opciones disponibles
   opciones_disponibles
+  
+  # Aviso para la ejecución correcta del script
+  echo "" && aviso_sudo
+  
+  # Salida de la ejecución del script
   exit 0
 }
 

@@ -346,25 +346,8 @@ function trazado_ruta(){
 }
 
 
-# Declaración de la función principal
-function main() {
-  # Importación de los scripts que contienen funciones a usar
-  source modules/clear_screen.sh
-  source modules/help.sh
-  source modules/menu.sh
-  
-  # Comprobación de si hay argumento
-  if (( ${#} == 1 )); then
-    if [[ ${1} == "-h" || ${1} == "--help" ]]; then
-      # Llamada a la función que muestra la ayuda del script help.sh
-      ayuda
-    else
-    
-      # Llamada a la función que muestra el error en cuanto a la petición de ayuda 
-      error_ayuda
-    fi
-  fi
-  
+# Función que contiene el loop del programa
+function loop_execution() {
   while [[ ${OPCN_USUARIO} != "9" ]]; do
     # Llamada a la función que limpia la pantalla del script clear_screen.sh
     clear_screen
@@ -378,7 +361,7 @@ function main() {
     opciones_disponibles  
 
     # Petición de una opción al usuario
-    echo "" && read -n 1 -p "Seleccione una opción: " OPCN_USUARIO && echo ""
+    echo -e "\e[38;5;123m" && read -n 1 -p "Seleccione una opción: " OPCN_USUARIO && echo -e "\e[0m"
 
     # Comparación de la opción introducida por el usuario con las opciones disponibles y llamada a su función
     case ${OPCN_USUARIO} in
@@ -390,19 +373,45 @@ function main() {
       6) usuarios_conectados_sistema;;
       7) espacio_libre_disco;;
       8) trazado_ruta;;
-      9) echo "" && echo "Ejecución finalizada";;
-      *) echo "" && echo "Se ha equivocado de número";;
+      9) echo "" && echo -e "\e[38;5;85mEjecución finalizada\e[0m";;
+      *) echo "" && echo -e "\e[38;5;196mSe ha equivocado\e[0m";;
     esac
 
     # En el caso de que la entrada de la opción sea distinta de "9", hará una pequeña espera y pedirá una pulsación de tecla
     if [[ ${OPCN_USUARIO} != "9" ]]; then
       sleep 1s
 
-      echo "" && read -n 1 -p "Pulse la tecla Intro para continuar..."
+      echo -e "\e[38;5;211m" && read -n 1 -p "Pulse la tecla Intro para continuar..." && echo -e "\e[0m"
     fi
 
+    # Incremento de la variable contadora
     CONTADOR=$(( ${CONTADOR} + 1 ))
   done
+}
+
+
+# Función principal
+function main() {
+  # Importación de los módulos necesarios para el script
+  source modules/clear_screen.sh
+  source modules/help.sh
+  source modules/menu.sh
+  
+  # Comprobación de si hay argumento
+  if (( ${#} == 0 )); then
+    # Llamada a la función que contiene el flujo de la ejecución del script
+    loop_execution
+  
+  elif (( ${#} == 1 )); then
+    if [[ ${1} == "-h" || ${1} == "--help" ]]; then
+      # Llamada a la función que muestra la ayuda del script help.sh
+      ayuda
+    else
+    
+      # Llamada a la función que muestra el error en cuanto a la petición de ayuda 
+      error_ayuda
+    fi
+  fi
 }
 
 

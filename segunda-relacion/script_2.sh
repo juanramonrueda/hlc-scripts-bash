@@ -128,25 +128,8 @@ function log_inicios_sesion() {
 }
 
 
-# Función principal
-function main() {
-  # Importación de los scripts para el funcionamiento de este script
-  source modules/script_2/clear_screen.sh
-  source modules/script_2/help.sh
-  source modules/script_2/menu.sh
-
-  # Comprobación de si hay argumento
-  if (( ${#} == 1 )); then
-    if [[ ${1} == "-h" || ${1} == "--help" ]]; then
-      # Llamada a la función que muestra la ayuda del script help.sh
-      ayuda
-    else
-      # Se muestra un error y se sale con el código de error
-      echo -e "\e[1;38;5;196mSe ha equivocado de argumento, es ${0} -h ó ${0} --help\e[0m"
-      exit 1
-    fi
-  fi
-
+# Función que contiene el loop del programa
+function loop_execution() {
   while (( ${OPCN_USUARIO} != 0 )); do
     # Llamada a la función para limpiar la pantalla
     clear_screen
@@ -183,6 +166,35 @@ function main() {
 
     CONTADOR=$(( ${CONTADOR} + 1 ))
   done
+}
+
+
+# Función principal
+function main() {
+  # Importación de los scripts para el funcionamiento de este script
+  source modules/script_2/clear_screen.sh
+  source modules/script_2/help.sh
+  source modules/script_2/menu.sh
+
+  # Comprobación de si hay argumento
+  if (( ${#} == 0 )); then
+    # Llamada a la función que contiene el flujo de la ejecución del script
+    loop_execution
+  
+  elif (( ${#} == 1 )); then
+    if [[ ${1} == "-h" || ${1} == "--help" ]]; then
+      # Llamada a la función que muestra la ayuda del script help.sh
+      ayuda
+    else
+      # Se muestra un error y se sale con el código de error
+      echo -e "\e[1;38;5;196mSe ha equivocado de argumento, es ${0} -h ó ${0} --help\e[0m"
+      exit 1
+    fi
+
+  else
+    # Llamada a la función para indicar que no necesita argumentos el script
+    no_args
+  fi
 }
 
 #--------------------------------------------------------------------------------------------------------------------------------

@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 #-----------------------------------------------------------------------------------------------------------------------------------
 # Declaración de funciones
 
@@ -31,20 +32,6 @@ PATRON_VOCALES_MAYUSCULAS="[a,e,i,o,u,á,é,í,ó,ú,ü] [A,E,I,O,U,Á,É,Í,Ó,
 #-----------------------------------------------------------------------------------------------------------------------------------
 # Declaración de funciones
 
-# Función para explicar el comportamiento del script
-function ayuda() {
-  echo -e "\e[38;5;27mEste script necesita un fichero (con texto a poder ser) para realizar distintas operaciones a otros ficheros"
-  echo -e "\e[0m"
-}
-
-# Función que explica de forma breve el error del usuario
-function error() {
-  echo -e "\e[38;5;160mDebe pasar únicamente un fichero y no un directorio como argumento al script\e[0m"
-
-  # Se genera el código de error para indicar que la ejecución no ha sido correcta
-  exit 1
-}
-
 # Función para cambiar el contenido del fichero a minúsculas en otro fichero
 function conversion_lower_case() {
   echo -e "\e[38;5;98mConversión de las letras a minúsculas\e[1m"
@@ -73,36 +60,47 @@ function vowels_upper_case() {
 }
 
 
+# Función que contiene el flujo normal del programa
+function normal_execution() {
+  if test -f ${FICHERO_ENTRADA}; then
+    # Llamada a la función para la conversión a minúsculas del contenido del fichero de entrada
+    conversion_lower_case
+
+    # Llamada a la función para la conversión a mayúsculas del contenido del fichero de entrada
+    conversion_upper_case
+
+    # Llamada a la función para eliminar todas las "a" del contenido del fichero de entrada
+    no_a
+
+    # Llamada a la función para la conversión a mayúsculas de las vocales del fichero de entrada
+    vowels_upper_case
+
+  else
+    # Llamada a la función que indica que el argumento pasado no es un fichero
+    error_arg
+  fi
+}
+
+
 # Función principal
 function main() {
-  # Llamada al script que contiene la función para limpiar la pantalla
-  source modules/clear_screen.sh
+  # Importación de los módulos necesarios para el script
+  source modules/script_9/help.sh
 
   # Comprobación de la cantidad de argumentos pasados al script
-  if (( $# != 1 )); then
-    # Llamada a la función que sirve de ayuda
-    ayuda 
+  if (( ${#} == 1 )); then
+    if [[ ${1} == "-h" || ${1} == "--help" ]]; then
+      # Llamada a la función que muestra la ayuda del script
+      ayuda
 
-    # Llamada al script que tiene las instrucciones del script
-    source modules/how_works_script_1.sh
-
-  # En el caso de que los argumentos sean correctos, se llamará a las funciones anteriores
-  else
-    if test -f ${FICHERO_ENTRADA}; then
-      # Llamada a la función para la conversión a minúsculas del contenido del fichero de entrada
-      conversion_lower_case
-
-      # Llamada a la función para la conversión a mayúsculas del contenido del fichero de entrada
-      conversion_upper_case
-
-      # Llamada a la función para eliminar todas las "a" del contenido del fichero de entrada
-      no_a
-
-      # Llamada a la función para la conversión a mayúsculas de las vocales del fichero de entrada
-      vowels_upper_case
     else
-      error
+      # Llamada a la función que contiene el flujo normal del programa
+      normal_execution
     fi
+
+  else
+    # Llamada a la función para indicar que se han pasado más argumentos de los necesarios
+    wrong_args
   fi
 }
 
@@ -111,5 +109,5 @@ function main() {
 # Ejecución de la función principal
 
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-    main "${@}"
+  main "${@}"
 fi

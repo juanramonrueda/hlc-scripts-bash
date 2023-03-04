@@ -100,13 +100,43 @@ function calculadora() {
 }
 
 
+# Función para realizar comprobaciones de los argumentos mediante patrones y llamar al resto de funciones
+function check_args() {
+  # Comprobación de que el primer argumento dado es un número
+  if [[ ${PRIMER_ARGUMENTO} =~ ${COMPROBACION_NUMERO} ]]; then
+          
+    # Comprobación de que el segundo argumento dado es un número
+    if [[ ${SEGUNDO_ARGUMENTO} =~ ${COMPROBACION_NUMERO} ]]; then
+              
+      # Comprobación de que el tercer argumento dado es una expresión utilizada en matemáticas
+      if [[ ${TERCER_ARGUMENTO} =~ ${COMPROBACION_OPERACION} ]]; then
+        calculadora
+
+      # Mensaje de que el tercer argumento dado no es un símbolo de expresión matemática
+      else
+        # Uso del backslash para "escapar" las comillas dobles
+        echo -e "\e[38;5;196mEl tercer argumento dado, \"${TERCER_ARGUMENTO}\", no es una expresión matemática\e[0m"
+      fi
+  
+    # Mensaje de que el segundo argumento dado no es un número    
+    else
+      echo -e "\e[38;5;196mEl segundo argumento dado, \"${SEGUNDO_ARGUMENTO}\", no es un número\e[0m"
+    fi
+
+  # Mensaje de que el primer argumento dado no es un número
+  else
+    echo -e "\e[38;5;196mEl primer argumento dado, \"${PRIMER_ARGUMENTO}\", no es un número\e[0m"
+  fi
+}
+
+
 # Función principal para validar los argumentos dados
 function main() {
   # Importación de scripts necesarios 
   source modules/script_1/help.sh
 
   if (( ${#} == 1 )); then
-    if [[ ${PRIMER_ARGUMENTO} == "-h" || ${PRIMER_ARGUMENTO} == "--help" ]]; then
+    if [[ ${1} == "-h" || ${1} == "--help" ]]; then
       # Llamada a la función que muestra la ayuda del script help.sh
       ayuda
       
@@ -117,36 +147,12 @@ function main() {
 
   # En el caso de que los argumentos pasados coincidan con la cantidad de argumentos necesarios, procederá con la ejecución
   elif (( ${#} == 3 )); then
+    # Función que revisa los argumentos pasados y llama al resto de funciones
+    check_args
 
-    # Comprobación de que el primer argumento dado es un número
-    if [[ ${PRIMER_ARGUMENTO} =~ ${COMPROBACION_NUMERO} ]]; then
-            
-      # Comprobación de que el segundo argumento dado es un número
-      if [[ ${SEGUNDO_ARGUMENTO} =~ ${COMPROBACION_NUMERO} ]]; then
-                
-        # Comprobación de que el tercer argumento dado es una expresión utilizada en matemáticas
-        if [[ ${TERCER_ARGUMENTO} =~ ${COMPROBACION_OPERACION} ]]; then
-          calculadora
-
-        # Mensaje de que el tercer argumento dado no es un símbolo de expresión matemática
-        else
-          # Uso del backslash para "escapar" las comillas dobles
-          echo -e "\e[38;5;196mEl tercer argumento dado, \"${TERCER_ARGUMENTO}\", no es una expresión matemática\e[0m"
-        fi
-    
-      # Mensaje de que el segundo argumento dado no es un número    
-      else
-        echo -e "\e[38;5;196mEl segundo argumento dado, \"${SEGUNDO_ARGUMENTO}\", no es un número\e[0m"
-      fi
-
-    # Mensaje de que el primer argumento dado no es un número
-    else
-      echo -e "\e[38;5;196mEl primer argumento dado, \"${PRIMER_ARGUMENTO}\", no es un número\e[0m"
-    fi
-
-    else
-      # En caso de no pasar ningún argumento, mostrará la ayuda y saldrá con un código erróneo
-      no_arg
+  else
+    # En caso de no pasar ningún argumento, mostrará la ayuda y saldrá con un código erróneo
+    no_arg
   fi
 }
 

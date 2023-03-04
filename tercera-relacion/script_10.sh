@@ -7,7 +7,6 @@
 # Función para indicar que hay un error
 function error() {
   echo -e "\e[1;38;5;1mEl valor para la variable 'x' no es un número, introduzca únicamente números\e[0m"
-
   exit 1
 }
 
@@ -17,6 +16,7 @@ function informacion_ecuacion() {
   echo -e "\e[1mDada la siguiente ecuación:"
   echo -e "\e[38;5;135m3x² + 5x + 8\e[0m" && echo ""
   read -p "Introduzca el valor para la variable 'x': " X
+  export X
 }
 
 
@@ -41,21 +41,37 @@ function calcular_ecuacion() {
 
   else
     # Llamada a la función que indica que hay un error en el valor de 'x'
-    error
+    error_variable
   fi
 }
 
 
 # Función principal
 function main() {
-  # Llamada al script que contiene la función para limpiar la pantalla
-  source clear_screen.sh
+  # Importación de módulos para el script
+  source modules/script_10/help.sh
 
-  # Llamada a la función para mostrar la ecuación y obtener el valor de "x"
-  informacion_ecuacion
+  if (( ${#} == 0 )); then
+    # Llamada a la función para mostrar la ecuación y obtener el valor de "x"
+    informacion_ecuacion
+    
+    # Llamada a la función que calcula el valor de la ecuación
+    calcular_ecuacion
   
-  # Llamada a la función que calcula el valor de la ecuación
-  calcular_ecuacion
+  elif (( ${#} == 1 )); then
+    if [[ ${1} == "-h" || ${1} == "--help" ]]; then
+      # Llamada a la función ayuda del script
+      ayuda
+
+    else
+      # Llamada a la función que indica que hay un error en la petición de ayuda
+      error_ayuda
+    fi
+
+  else
+    # Llamada a la función que indica que no han de pasarse argumentos
+    no_args
+  fi
 }
 
 
@@ -63,5 +79,5 @@ function main() {
 # Ejecución de la función principal
 
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-    main "${@}"
+  main "${@}"
 fi

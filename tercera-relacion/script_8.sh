@@ -27,17 +27,33 @@ function user_shell() {
 
 # Función principal
 function main() {
-  # Llamada al script que contiene la función para limpiar la pantalla
-  source modules/clear_screen.sh
+  # Importación de módulos necesarios para la ejecución del script
+  source modules/script_8/help.sh
 
-  # Llamada a la función que muestra el usuario activo en el sistema
-  active_user
+  if (( ${#} == 0 )); then
+    # Llamada a la función que muestra el usuario activo en el sistema
+    active_user
 
-  # Llamada a la función que muestra el directorio de trabajo del usuario activo en el sistema
-  working_directory
+    # Llamada a la función que muestra el directorio de trabajo del usuario activo en el sistema
+    working_directory
 
-  # Llamada a la función que muestra el Shell asociado al usuario activo en el sistema
-  user_shell
+    # Llamada a la función que muestra el Shell asociado al usuario activo en el sistema
+    user_shell
+  
+  elif (( ${#} == 1 )); then
+    if [[ ${1} == "-h" || ${1} == "--help" ]]; then
+      # Llamada a la función ayuda
+      ayuda
+    
+    else
+      # Llamada a la función para mostrar un error en la petición de la ayuda
+      error_ayuda
+    fi
+  
+  else
+    # Llamada a la función que indica que el script no necesita argumentos para su ejecución
+    no_args
+  fi
 }
 
 
@@ -45,5 +61,5 @@ function main() {
 # Ejecución de la función principal
 
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-    main "${@}"
+  main "${@}"
 fi

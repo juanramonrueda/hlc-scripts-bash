@@ -86,6 +86,39 @@ function generate_output_file_content() {
 }
 
 
+# Función que contiene el flujo normal del programa
+function normal_execution() {
+  # Comprobación de que el fichero de entrada existe
+  if test -f ${INPUT_FILE}; then
+
+    # Comprobación de que el fichero de salida existe
+    if test -f ${OUTPUT_FILE}; then
+      # Llamada a la función que generará el contenido al fichero de salida
+      generate_output_file_content
+
+    # Creación del fichero de salida junto a la cabecera en el caso de no existir
+    else
+      # Mensaje de que se está creando el fichero de salida
+      echo "Creando el fichero ${OUTPUT_FILE}..."
+
+      # Pequeña parada de un segundo
+      sleep 1s
+
+      # Creación del archivo y agregación de la cabecera al fichero
+      touch ${OUTPUT_FILE} && echo "${CABECERA_SALIDA}" >> ${OUTPUT_FILE}
+
+      # Llamada a la función que generará el contenido al fichero de salida
+      generate_output_file_content
+    fi
+
+  # En el caso de que el fichero de entrada no exista, saldrá de la ejecución del script
+  else
+    # Llamada a la función que indica que el primer argumento no es un fichero de entrada o no existe
+    no_entrada
+  fi
+}
+
+
 # Función principal
 function main() {
   # Importación del módulo para la ayuda del script
@@ -103,42 +136,12 @@ function main() {
     fi
 
   elif (( ${#} == 2 )); then
+    # Llamada a la función que contiene el flujo normal del programa
+    normal_execution
 
-    # Comprobación de que el fichero de entrada existe
-    if test -e ${INPUT_FILE}; then
-
-      # Comprobación de que el fichero de salida existe
-      if test -e ${OUTPUT_FILE}; then
-        # Llamada a la función que generará el contenido al fichero de salida
-        generate_output_file_content
-
-      # Creación del fichero de salida junto a la cabecera en el caso de no existir
-      else
-        # Mensaje de que se está creando el fichero de salida
-        echo "Creando el fichero ${OUTPUT_FILE}..."
-
-        # Pequeña parada de un segundo
-        sleep 1s
-
-        # Creación del archivo y agregación de la cabecera al fichero
-        touch ${OUTPUT_FILE} && echo "${CABECERA_SALIDA}" >> ${OUTPUT_FILE}
-
-        # Llamada a la función que generará el contenido al fichero de salida
-        generate_output_file_content
-      fi
-
-    # En el caso de que el fichero de entrada no exista, saldrá de la ejecución del script
-    else
-      echo "El fichero de entrada ${INPUT_FILE} no existe"
-      exit 1
-    fi
-
-  # En el caso de que se hayan pasado una cantidad distinta a dos argumentos, mostrará los mensajes
   else
-    # Muestra la cantidad de argumentos que se han pasado al script
-    echo -e "\e[38;5;196mHa introducido una cantidad incorrecta de argumentos al script" && echo ""
-    ayuda
-    exit 1
+    # Llamada a la función que indica que no se ha pasado la cantidad de argumentos requerida
+    wrong_args
   fi
 }
 

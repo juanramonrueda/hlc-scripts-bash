@@ -37,6 +37,37 @@ function file_doesnt_exists() {
 }
 
 
+# Función que contiene el flujo normal del programa
+function normal_execution() {
+  # Comprobación de la no existencia del fichero
+  if ! test -f ${RUTA_FICHERO} ; then
+    echo -e "\e[38;5;196mEl fichero no existe" && echo "" && file_doesnt_exists
+
+  # Entrada a esta condición debido a la existencia del fichero en la ruta
+  else
+    # Obtención del nombre del archivo en variable
+    NOMBRE_FICHERO=$( echo "${RUTA_FICHERO}" | rev | awk -F '/' '{print $1}' | rev )
+  
+    # Se usa el modificador -e para coger el backslash "\" como caracter normal y se añade un código de color, \e[94m
+    echo -e "\e[1;94mContenido del archivo con líneas numeradas\e[0;94m:"
+  
+    # Se muestra el contenido del fichero con las líneas numeradas y se pone el color por defecto mediante \e[0m
+    awk '{print NR, $0 }' ${RUTA_FICHERO} && echo -e "\e[0m"
+
+    # Se obtienen la cantidad total de líneas en variable
+    CANTIDAD_LINEAS_FICHERO=$( wc -l < ${RUTA_FICHERO} )
+    echo -e "\e[1;92mEl fichero tiene ${CANTIDAD_LINEAS_FICHERO} líneas en total\e[0m" && echo ""
+    
+    # Se obtienen la cantidad de palabras que tiene el fichero
+    CANTIDAD_PALABRAS_FICHERO=$( wc -w < ${RUTA_FICHERO} )
+    echo -e "\e[1;95mEl fichero tiene ${CANTIDAD_PALABRAS_FICHERO} palabras en total\e[0m" && echo ""
+
+    # Se obtienen la cantidad de caracteres que tiene el fichero
+    CANTIDAD_CARACTERES_FICHERO=$( wc -m < ${RUTA_FICHERO} )
+    echo -e "\e[1;33mEl fichero tiene ${CANTIDAD_CARACTERES_FICHERO} caracteres en total\e[0m"
+  fi
+}
+
 # Función principal
 function main() {
   # Llamada al script de limpieza de pantalla
@@ -49,33 +80,9 @@ function main() {
       ayuda
 
     else
-      # Comprobación de la no existencia del fichero
-      if ! test -f ${RUTA_FICHERO} ; then
-        echo -e "\e[38;5;196mEl fichero no existe" && echo "" && file_doesnt_exists
 
-      # Entrada a esta condición debido a la existencia del fichero en la ruta
-      else
-        # Obtención del nombre del archivo en variable
-        NOMBRE_FICHERO=$( echo "${RUTA_FICHERO}" | rev | awk -F '/' '{print $1}' | rev )
-      
-        # Se usa el modificador -e para coger el backslash "\" como caracter normal y se añade un código de color, \e[94m
-        echo -e "\e[1;94mContenido del archivo con líneas numeradas\e[0;94m:"
-      
-        # Se muestra el contenido del fichero con las líneas numeradas y se pone el color por defecto mediante \e[0m
-        awk '{print NR, $0 }' ${RUTA_FICHERO} && echo -e "\e[0m"
-
-        # Se obtienen la cantidad total de líneas en variable
-        CANTIDAD_LINEAS_FICHERO=$( wc -l < ${RUTA_FICHERO} )
-        echo -e "\e[1;92mEl fichero tiene ${CANTIDAD_LINEAS_FICHERO} líneas en total\e[0m" && echo ""
-        
-        # Se obtienen la cantidad de palabras que tiene el fichero
-        CANTIDAD_PALABRAS_FICHERO=$( wc -w < ${RUTA_FICHERO} )
-        echo -e "\e[1;95mEl fichero tiene ${CANTIDAD_PALABRAS_FICHERO} palabras en total\e[0m" && echo ""
-
-        # Se obtienen la cantidad de caracteres que tiene el fichero
-        CANTIDAD_CARACTERES_FICHERO=$( wc -m < ${RUTA_FICHERO} )
-        echo -e "\e[1;33mEl fichero tiene ${CANTIDAD_CARACTERES_FICHERO} caracteres en total\e[0m"
-      fi
+      # Llamada a la función que contiene el flujo normal del programa
+      normal_execution
     fi
 
   # Entrada a esta condición cuando no se ha pasado ningún argumento

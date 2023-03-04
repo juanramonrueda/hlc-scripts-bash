@@ -16,3 +16,10 @@ function aviso_sudo() {
   echo -e "\e[1;38;5;196mEste script puede necesitar permisos de sudo para que algunas funcionalidades se ejecuten correctamente"
   echo -e "\e[0m"
 }
+
+
+# Función para indicar que el script no necesita argumentos
+function no_args() {
+  echo -e "\e[38;5;196mEste script no necesita argumentos\e[0m"
+  exit 1
+}

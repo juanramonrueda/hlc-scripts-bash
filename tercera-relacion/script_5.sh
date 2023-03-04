@@ -66,11 +66,14 @@ function main() {
       ayuda
 
     else
+      # Llamada a la función que crea un array con los elementos del directorio pasado
       create_array
 
+      # Función para recorrer los elementos del array
       recorrer_array
     fi
   else
+    # Llamada a la función para indicar que no se ha pasado ningún argumento
     no_arg
   fi
 }
