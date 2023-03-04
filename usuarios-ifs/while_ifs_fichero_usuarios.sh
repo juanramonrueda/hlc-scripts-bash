@@ -27,7 +27,7 @@ OUTPUT_FILE="${2}"
 # del archivo de entrada al fichero de salida sin sobreescribir y sin duplicar, triplicar...
 function generate_output_file_content() {
   # Uso de un archivo intermedio para omitir la cabecera mediante -n y + para indicar que empiece desde esa línea
-  tail -n +2 $INPUT_FILE >> ${INTERMEDIATE_FILE}
+  tail -n +2 ${INPUT_FILE} >> ${INTERMEDIATE_FILE}
 
   # Con read -r se lee línea a línea el archivo de entrada y se guarda en REGISTROS_FICHERO
   while IFS= read -r REGISTROS_FICHERO
