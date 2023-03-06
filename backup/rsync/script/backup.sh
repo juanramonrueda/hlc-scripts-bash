@@ -57,7 +57,7 @@ function main() {
   COPY_DIR=$( ls /home )
 
   # Realización de la copia de seguridad
-  rsync -azPe "ssh -i ~/claves/vockey.pem" --update --append-verify /home/rayseink/docker ubuntu@52.6.48.110:/backup
+  rsync -azPe "ssh -i ~/claves/vockey.pem" --update --append-verify ${COPY_DIR} ubuntu@52.6.48.110:/backup
 
   # Mediante el modificador "a" se especifica que el paso de información sea mediante modo archivo
   # Mediante el modificador "z" se especifica para que se haga compresión durante la transferencia
