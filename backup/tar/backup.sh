@@ -57,7 +57,7 @@ function main() {
   COPY_DIR=$( ls /home )
 
   # Realización de la copia de seguridad
-  tar -cvf $BACKUP_DIR_NAME/$BACKUP_FILE_NAME $COPY_DIR
+  tar -cvf ${BACKUP_DIR_NAME}/${BACKUP_FILE_NAME} ${COPY_DIR}
 
   
   # Habilitación de los usuarios del sistema que se encuentran en la lista del principio
@@ -75,5 +75,5 @@ function main() {
 # Ejecución de la función principal
 
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-    main "${@}"
+  main "${@}"
 fi
