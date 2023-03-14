@@ -37,7 +37,7 @@ function main() {
   exec &>>${GENERATE_LOGS}
 
   # Guardado en lista de los usuarios del sistema que tienen el UID 1000 o superior
-  SYSTEM_USERS_LIST=$( cat /etc/passwd | awk -F ":" '($3 >= 1000) {print $1}' )
+  SYSTEM_USERS_LIST=$( cat /etc/passwd | awk -F ":" '($3 >= 1000 && $3 < 65534) {print $1}' )
 
   # Deshabilitación de los usuarios que están en la lista
   for SYSTEM_USER in ${SYSTEM_USERS_LIST}
