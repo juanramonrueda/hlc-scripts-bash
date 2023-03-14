@@ -51,7 +51,7 @@ function obtener_hosts() {
       echo "Pinging to ${NO_ZERO_IP}.${CUARTO_OCTETO}"
       
       # Ping a la IP que está en ese momento en el bucle y su salida se manda a NULL
-      ping -c 1 "${NO_ZERO_IP}.${CUARTO_OCTETO}" >/dev/null 2>&1
+      ping -W 1 -c 1 "${NO_ZERO_IP}.${CUARTO_OCTETO}" >/dev/null 2>&1
 
       # Obtención del RC del comando para saber si ha sido exitoso el ping o no
       RESULTADO=$( echo $? )
