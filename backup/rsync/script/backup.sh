@@ -7,9 +7,6 @@
 # Variable para establecer el directorio en el que se monta el dispositivo externo
 BACKUP_DIR_NAME="/backup"
 
-# Variable para establecer el nombre para las copias de seguridad
-BACKUP_FILE_NAME="BK-$(date +%Y%m%d).tar"
-
 # Variable para establecer el directorio para los archivos log
 LOGS_DIR_NAME="/logs/backup"
 
@@ -57,13 +54,13 @@ function main() {
   COPY_DIR=$( ls /home )
 
   # Realización de la copia de seguridad
-  rsync -azPe "ssh -i ~/claves/vockey.pem" --update --append-verify /home/rayseink/docker ubuntu@52.6.48.110:/backup
+  rsync -azPe "ssh -i ~/claves/vockey.pem" --update --append-verify ${COPY_DIR} ubuntu@52.6.48.110:${BACKUP_DIR_NAME}
 
   # Mediante el modificador "a" se especifica que el paso de información sea mediante modo archivo
   # Mediante el modificador "z" se especifica para que se haga compresión durante la transferencia
   # Mediante el modificador "P" se especifica para mostrar el progreso de la transferencia
   # Mediante el modificador "e" se especifica el tipo de conexión, el puerto y el archivo de claves a usar
-  # Mediante el modificador "--update" se usa para saltar archivos que son nuevos en el destino
+  # Mediante el modificador "--update" se usa para pasar los archivos que son nuevos en el destino
   # Mediante el modificador "--append-verify" se usa para verificar los datos que hay en el destino
   # ¡NOTA! ---> El directorio al que se pasan las copias de seguridad debe tener un grupo y propietario != root
 
